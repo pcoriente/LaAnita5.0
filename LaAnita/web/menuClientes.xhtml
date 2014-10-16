@@ -1,0 +1,461 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:pe="http://primefaces.org/ui/extensions">
+    <h:head>
+        <h:outputStylesheet library="css" name="main.css"/>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+        <div id="wrapper" align="center">
+            <ui:include src="wrapper.xhtml" />
+            <div id="content" align="center"  >
+                <br></br>
+                <h:form id="form" onkeypress="return event.keyCode !== 13;" >
+                    <p:growl id="growl" autoUpdate="true" showDetail="true"/>  
+                    <div align="right">
+                        <p:commandButton icon="ui-icon-document"
+                                         title="Nuevo Grupo"
+                                         oncomplete="dlgClientes.show();"
+                                         update="form :form:panelClientes 
+                                         :form:panelCapturaDireccion
+                                         :form:txtRfcCliente"
+                                         process="@this"
+                                         actionListener="#{mbClientesBueno.cancelar()}"/>
+                        <p:commandButton id="actualizarContacto"
+                                         icon="ui-icon-pencil"
+                                         title="Actualizar Grupo"
+                                         process="@this"
+                                         oncomplete="dlgClientes.show();"
+                                         update="form :form:panelClientes 
+                                         :form:panelCapturaDireccion
+                                         :form:txtRfcCliente"
+                                         actionListener="#{mbClientesBueno.limpiarCampos()}"
+                                         disabled="#{mbClientesBueno.controlActualizar==0}"/>
+                        <p:commandButton icon="ui-icon-arrowreturnthick-1-w"
+                                         ajax="false"
+                                         title="Salir"
+                                         action="#{mbClientesBueno.salir()}"/>
+                    </div>
+                    <p:panel header="CLIENTES" 
+                             styleClass="quitaCuadro">
+                        <p:dataTable
+                            id="tablaClientesGrupos"
+                            value="#{mbClientesBueno.lstCliente}"
+                            var="lstCliente"
+                            selection="#{mbClientesBueno.clienteSeleccionado}"
+                            selectionMode="single"
+                            rowKey="#{lstCliente}"
+                            emptyMessage="No hay clientes"
+                            scrollable="true"
+                            scrollHeight="310"
+                            >
+                            <p:ajax event="rowSelect"
+                                    process="@this"
+                                    listener="#{mbClientesBueno.cargarDatos()}"
+                                    update=":form:actualizarContacto 
+                                    :form:cmbBancos 
+                                    :form:panelClientes"
+                                    />
+                            <p:column headerText="Cliente" 
+                                      filterBy="#{lstCliente.nombreComercial}" 
+                                      filterMatchMode="contains" 
+                                      width="500">
+                                #{lstCliente.nombreComercial}
+                            </p:column>
+                            <p:column headerText="Rfc" 
+                                      filterBy=" #{lstCliente.contribuyente.rfc}" 
+                                      filterMatchMode="contains">
+                                #{lstCliente.contribuyente.rfc}
+                            </p:column>
+                            <p:column headerText="CodigoTienda" >
+                                #{lstCliente.codigoTienda}
+                            </p:column>
+                        </p:dataTable>
+                    </p:panel>
+                    <p:dialog widgetVar="dlgClientes"
+                              resizable="false"
+                              header="Mantenimiento Clientes"
+                              closable="false"
+                              modal="true">
+                        <h:panelGrid columns="3" id="panelClientes">
+                            <h:outputLabel styleClass="colorLetra" value="Rfc Contribuyente: "/>
+                            <p:autoComplete  id="txtRfcCliente" 
+                                             process="@this"
+                                             value="#{mbClientesBueno.cliente.contribuyente.rfc}"
+                                             completeMethod="#{mbClientesBueno.completarClientes}"
+                                             maxResults="3"/>
+                            <p:commandButton icon="ui-icon-plus"
+                                             oncomplete="validarRfc(xhr, status, args);"
+                                             title="Nuevo Contribuyente"
+                                             actionListener="#{mbClientesBueno.obtenerInformacionRfc()}"
+                                             update="growl 
+                                             :form:panelContribuyente 
+                                             :form:txtDireccion
+                                             :form:txtRfc"
+                                             process="@this :form:txtRfcCliente"/>
+                            <h:outputLabel styleClass="colorLetra" value="Codigo Cliente:"/>
+                            <pe:inputNumber value="#{mbClientesBueno.cliente.codigoCliente}"
+                                            emptyValue="zero"
+                                            decimalPlaces="0"/> 
+                            <h:outputLabel/>
+                            <h:outputLabel styleClass="colorLetra" value="Codigo Tienda:"/>
+                            <pe:inputNumber value="#{mbClientesBueno.cliente.codigoTienda}"
+                                            emptyValue="zero"
+                                            decimalPlaces="0"/> 
+                            <h:outputLabel/>
+
+                            <h:outputLabel styleClass="colorLetra" value="Nombre Comercial:"/>
+                            <p:inputText value="#{mbClientesBueno.cliente.nombreComercial}"/> 
+                            <h:outputLabel/>
+
+                            <h:outputLabel styleClass="colorLetra" value="Dirección:"/>
+                            <p:inputTextarea id="txtDireccionCliente" 
+                                             value="#{mbClientesBueno.cliente.direccion}"
+                                             rows="5"
+                                             cols="22"
+                                             disabled="true"/> 
+                            <p:commandButton icon="ui-icon-plus" 
+                                             oncomplete="dlgDireccion.show();"
+                                             title="Nueva Direccion"
+                                             actionListener="#{mbClientesBueno.altaDireccionClientes()}"
+                                             update=":form:panelCapturaDireccion"
+                                             process="@this"/>
+
+                            <h:outputLabel  styleClass="colorLetra" value="Agente:"/>
+                            <p:selectOneMenu filter="true"
+                                             style="width: 155px"
+                                             value="#{mbClientesBueno.mbAgentes.cmbAgentes}">
+                                <f:selectItems value="#{mbClientesBueno.mbAgentes.lstAgentes}"/>
+                                <f:converter converterId="agentes.Converter"/>
+                            </p:selectOneMenu>
+                            <h:outputText/>
+                            <h:outputLabel  styleClass="colorLetra" value="Grupo Cliente"/>
+                            <p:selectOneMenu filter="true"
+                                             id="cmbClientesGrupos"
+                                             value="#{mbClientesBueno.mbClientesGrupos.cmbClientesGrupos}"
+                                             style="width: 155px">
+                                <f:selectItems value="#{mbClientesBueno.mbClientesGrupos.itemsClientesGrupos}"/>
+                                <f:converter converterId="converters.ClientesGrupos"/>
+                                <p:ajax event="change" 
+                                        listener="#{mbClientesBueno.cargarFormatos()}" 
+                                        process="@this"
+                                        update=":form:cmbFormatos"/>
+                            </p:selectOneMenu>
+                            <h:outputText/>
+                            <h:outputLabel  styleClass="colorLetra" value="Formato"/>
+                            <p:selectOneMenu filter="true" 
+                                             id="cmbFormatos"
+                                             style="width: 155px"
+                                             value="#{mbClientesBueno.mbClientesGrupos.mbFormatos.cmbClientesFormatos}">
+                                <f:selectItems value="#{mbClientesBueno.mbClientesGrupos.mbFormatos.lstFormatos}"/>
+                                <f:converter converterId="CFormatos"/>
+                            </p:selectOneMenu>
+                            <h:outputText/>
+                            <h:outputLabel  styleClass="colorLetra" value="Impuesto Zona:"/>
+                            <p:selectOneMenu id="cmbZonas"
+                                             style="width: 155px"
+                                             value="#{mbClientesBueno.mbZonas.zona}"
+                                             filter="true">
+                                <f:selectItems value="#{mbClientesBueno.mbZonas.listaZonas}"/>
+                                <f:converter converterId="converters.ImpuestoZona"/>
+                                <p:ajax event="change" process="@this"/>
+                            </p:selectOneMenu> 
+                            <h:outputLabel/>
+
+
+                            <h:outputLabel  styleClass="colorLetra" value="Ruta:"/>
+                            <p:selectOneMenu id="cmbRutas"
+                                             style="width: 155px"
+                                             filter="true"
+                                             value="#{mbClientesBueno.mbRutas.cmbRuta}">
+                                <f:selectItems value="#{mbClientesBueno.mbRutas.lstRuta}"/>
+                                <f:converter converterId="converter.rutas"/>
+                            </p:selectOneMenu> 
+                            <h:outputLabel/>
+
+                            <h:outputLabel styleClass="colorLetra" value="Dias Credito:"/>
+                            <pe:inputNumber value="#{mbClientesBueno.cliente.diasCredito}"
+                                            emptyValue="zero"
+                                            decimalPlaces="0"
+                                            /> 
+                            <h:outputLabel/>
+                            <h:outputLabel  styleClass="colorLetra" value="Limite Credito:"/>
+                            <pe:inputNumber value="#{mbClientesBueno.cliente.limiteCredito}"  
+                                            decimalPlaces="2" 
+                                            minValue="0" 
+                                            emptyValue="zero">
+                            </pe:inputNumber>
+                            <h:outputLabel/>
+                            <h:outputLabel  styleClass="colorLetra" value="Desc. Comercial:"/>
+                            <pe:inputNumber value="#{mbClientesBueno.cliente.descuentoComercial}"
+                                            decimalPlaces="2" 
+                                            minValue="0" 
+                                            immediate="true"
+                                            emptyValue="zero">
+                            </pe:inputNumber>
+                            <h:outputLabel/>
+                            <h:outputLabel  styleClass="colorLetra" value="Dias Bloqueo:"/>
+                            <pe:inputNumber value="#{mbClientesBueno.cliente.diasBloqueo}"
+                                            decimalPlaces="0"
+                                            /> 
+                            <h:outputLabel/>
+                            <h:outputLabel value="Num.Cuenta:" styleClass="colorLetra" 
+                                           rendered="#{mbClientesBueno.actualizar}"/>
+                            <p:selectOneMenu id="cmbBancos"
+                                             value="#{mbClientesBueno.clientes}"
+                                             rendered="#{mbClientesBueno.actualizar}"
+                                             filter="true"
+                                             style="width: 155px">
+                                <f:selectItems  value="#{mbClientesBueno.mbClientesBancos.lstClientesBancos}"/>
+                                <f:converter converterId="converters.ClientesBancos"/>
+                            </p:selectOneMenu>
+                            <p:commandButton icon="ui-icon-plus"
+                                             rendered="#{mbClientesBueno.actualizar}"
+                                             oncomplete="dlgCuentasBancos.show();"
+                                             process="@this cmbBancos"
+                                             update=":form:panelCuentasBancos"
+                                             actionListener="#{mbClientesBueno.dameInformacion()}"
+                                             title="Nuva Cuenta Bancaria"/>
+                        </h:panelGrid>
+                        <p:commandButton 
+                            process="@this :form:panelClientes"
+                            actionListener="#{mbClientesBueno.guardar()}" 
+                            update="growl 
+                            :form:tablaClientesGrupos 
+                            :form:panelClientes
+                            :form:actualizarContacto"
+                            oncomplete="nuevoCliente(xhr, status, args);"
+                            icon="ui-icon-disk"
+                            title="Guardar Cliente"
+                            />
+                        <p:commandButton 
+                            actionListener="#{mbClientesBueno.cancelar()}"
+                            oncomplete="dlgClientes.hide();"
+                            process="@this :form:cmbBancos"
+                            title="Cancelar"
+                            icon="ui-icon-arrowreturnthick-1-w"
+                            update=":form:actualizarContacto 
+                            :form:tablaClientesGrupos 
+                            :form:txtRfc 
+                            :form:panelClientes
+                            :form:panelCapturaDireccion
+                            :form:cmbBancos"
+                            />
+                    </p:dialog>
+
+                    <p:dialog widgetVar="dlgContribuyentes"
+                              header="Contribuyentes"
+                              resizable="false"
+                              closable="false"
+                              >
+                        <h:panelGrid columns="3" id="panelContribuyente">
+                            <h:outputLabel  styleClass="colorLetra" value="Rfc:"/>
+                            <p:inputText id="txtRfc" 
+                                         value="#{mbClientesBueno.mbContribuyente.contribuyente.rfc}"
+                                         disabled="#{mbClientesBueno.activarRfc==true}">
+                                <p:ajax event="keyup" 
+                                        update="growl
+                                        :form:panelContribuyente"
+                                        listener="#{mbClientesBueno.dameStatusRfc()}"/>
+                            </p:inputText>
+                            <h:outputLabel/>
+                            <h:outputLabel styleClass="colorLetra" value="Contribuyente:"/>
+                            <p:inputText id="clienteContribuyente" value="#{mbClientesBueno.mbContribuyente.contribuyente.contribuyente}"/> 
+                            <h:outputLabel/>
+                            <h:outputLabel styleClass="colorLetra" value="Curp:"/>
+                            <p:inputText  id="txtCurp" 
+                                          disabled="#{mbClientesBueno.personaFisica ==2 || mbClientesBueno.personaFisica ==0}"
+                                          value="#{mbClientesBueno.mbContribuyente.contribuyente.curp}"/>
+                            <h:outputLabel/>
+                            <h:outputLabel  styleClass="colorLetra" value="Dirección:"/>
+                            <p:inputTextarea id="txtDireccion" 
+                                             value="#{mbClientesBueno.cliente.contribuyente.direccion}"
+                                             rows="5"
+                                             cols="22"
+                                             disabled="true"/> 
+                            <p:commandButton icon="ui-icon-plus" 
+                                             oncomplete="dlgDireccion.show();"
+                                             title="Nueva Direccion"
+                                             process="@this"
+                                             update=":form:panelCapturaDireccion"
+                                             actionListener="#{mbClientesBueno.mostrarDireccionContribuyente()}"
+                                             />
+                            <h:outputLabel/>
+                        </h:panelGrid>
+                        <div align="center">
+                            <p:commandButton title="Guardar Contribuyente"
+                                             actionListener="#{mbClientesBueno.validarContribuyente()}"
+                                             update="growl"
+                                             oncomplete="nuevoContribuyente(xhr, status, args)"
+                                             icon="ui-icon-disk"/>
+                            <p:commandButton title="Salir" 
+                                             icon="ui-icon-arrowreturnthick-1-w"
+                                             oncomplete="dlgContribuyentes.hide();"/>
+                        </div>
+                    </p:dialog>
+                    <p:dialog  header="Nueva Dirección" 
+                               widgetVar="dlgDireccion"
+                               modal="true"
+                               resizable="false"
+                               closable="false">
+                        <h:panelGrid id="panelCapturaDireccion" columns="2">
+                            <h:outputLabel value="Calle:" for="calle"  styleClass="colorLetra" />
+                            <p:inputText  id="calle" value="#{mbClientesBueno.mbDireccion.direccion.calle}"/>
+                            <h:outputLabel value="No.Exterior:" styleClass="colorLetra"/>
+                            <p:inputText id="noExterior" value="#{mbClientesBueno.mbDireccion.direccion.numeroExterior}"/>
+                            <h:outputLabel value="No.Interior:" styleClass="colorLetra" />
+                            <p:inputText id="noInterior" value="#{mbClientesBueno.mbDireccion.direccion.numeroInterior}"/>
+                            <h:outputLabel value="Referencia:" styleClass="colorLetra" />
+                            <p:inputText id="referencia" value="#{mbClientesBueno.mbDireccion.direccion.referencia}"/>
+                            <h:outputLabel value="País:" styleClass="colorLetra"/>
+                            <p:selectOneMenu id="cboPaises" 
+                                             value="#{mbClientesBueno.mbDireccion.direccion.pais}"
+                                             style="width: 188px">
+                                <f:converter converterId="converters.Pais" />
+                                <f:selectItems value="#{mbDireccion.listaPaises}" />
+                            </p:selectOneMenu>
+                            <h:outputLabel value="Código Postal:" styleClass="colorLetra" />
+                            <h:panelGroup>
+                                <h:panelGrid columns="3">
+                                    <p:inputText id="codigoPostal" 
+                                                 value="#{mbClientesBueno.mbDireccion.direccion.codigoPostal}"/>
+                                    <p:commandButton  
+                                        title="Buscar Codigo Postal"
+                                        icon="ui-icon-search"
+                                        action="#{mbClientesBueno.mbDireccion.buscarAsentamientos()}" 
+                                        process="@this cboPaises codigoPostal" 
+                                        update="cboAsentamientos"
+                                        style="height: 30px"/>
+                                </h:panelGrid>
+                            </h:panelGroup>
+                            <h:outputLabel value="Colonia:" styleClass="colorLetra" />
+                            <h:panelGroup id="asentamientos">
+                                <h:panelGrid rendered="#{mbClientesBueno.mbDireccion.editarAsentamiento}" columns="2" >
+                                    <p:inputText id="txtAsentamiento" 
+                                                 value="#{mbClientesBueno.mbDireccion.direccion.colonia}"/>
+                                    <p:commandButton 
+                                        icon="ui-icon-pencil"
+                                        actionListener="#{mbClientesBueno.mbDireccion.setEditarAsentamiento(false)}" 
+                                        update="asentamientos"
+                                        title="Elegir Asentamiento"
+                                        process="@this"/>
+                                </h:panelGrid>
+                                <p:selectOneMenu id="cboAsentamientos" 
+                                                 rendered="#{!mbClientesBueno.mbDireccion.editarAsentamiento}" 
+                                                 value="#{mbClientesBueno.mbDireccion.direccion.selAsentamiento}" 
+                                                 style="width: 188px">
+                                    <p:ajax event="change" listener="#{mbClientesBueno.mbDireccion.actualizaAsentamiento}" 
+                                            update="estado municipio localidad  asentamientos" />             
+                                    <f:converter converterId="converters.Asentamiento" />
+                                    <f:selectItems value="#{mbClientesBueno.mbDireccion.listaAsentamientos}" />
+                                </p:selectOneMenu>
+                            </h:panelGroup>
+                            <h:outputLabel value="Ciudad/Localidad:" styleClass="colorLetra" />
+                            <p:inputText id="localidad" value="#{mbClientesBueno.mbDireccion.direccion.localidad}"/>
+                            <h:outputLabel value="Municipio/Delegación:" styleClass="colorLetra" />
+                            <p:inputText id="municipio" value="#{mbClientesBueno.mbDireccion.direccion.municipio}" />
+                            <h:outputLabel  value="Estado:" styleClass="colorLetra" />
+                            <p:inputText id="estado" value="#{mbClientesBueno.mbDireccion.direccion.estado}" />
+                            <h:outputLabel value="GLN:" styleClass="colorLetra" />
+                            <p:inputText id="gln" value="#{mbClientesBueno.mbDireccion.direccion.numeroLocalizacion}"/>
+                            <h:outputLabel />
+                            <h:panelGroup style="display: block; text-align: right" >
+                                <p:commandButton icon="#{mbAgentes.lblNuevaDireccionAgente}"
+                                                 actionListener="#{mbClientesBueno.validarDireccion()}"
+                                                 process="@this panelCapturaDireccion"
+                                                 title="Grabar Direccion"
+                                                 update=":form:txtDireccion growl txtDireccionCliente"
+                                                 oncomplete="nuevaDireccion(xhr, status, args)" />
+                                <p:commandButton icon="ui-icon-arrowreturnthick-1-w"
+                                                 title="Cancelar Direccion"
+                                                 actionListener="#{mbAgentes.mbDireccion.cancelarDireccion()}"
+                                                 process="@this"
+                                                 oncomplete="dlgDireccion.hide();"/>
+                            </h:panelGroup>
+                        </h:panelGrid>
+                    </p:dialog>
+                    <p:dialog widgetVar="dlgCuentasBancos"
+                              resizable="false"
+                              header="Numero de Cuenta"
+                              closable="false"
+                              modal="true">
+                        <h:panelGrid columns="2" id="panelCuentasBancos">
+                            <h:outputLabel styleClass="colorLetra" value="Banco:"/>
+                            <p:selectOneMenu id="cmbBancosN"
+                                             filter="true"
+                                             style="width: 155px"
+                                             value="#{mbClientesBueno.mbClientesBancos.mbBanco.objBanco}">
+                                <f:selectItems value="#{mbClientesBueno.mbClientesBancos.mbBanco.listaTodosBancos}"/>
+                                <f:converter converterId="converters.Banco"/>
+                            </p:selectOneMenu>
+                            <h:outputLabel styleClass="colorLetra" value="Num.Cuenta" />
+                            <p:inputText id="nunCuenta" value="#{mbClientesBueno.mbClientesBancos.clientesBancos.numCtaPago}"/>
+                            <h:outputLabel styleClass="colorLetra" value="Pago:"/>
+                            <p:inputText id="medioPago" value="${mbClientesBueno.mbClientesBancos.clientesBancos.medioPago}"/>
+                        </h:panelGrid>
+                        <div style="margin: auto">
+                            <p:commandButton icon="ui-icon-disk" 
+                                             title="Guardar número de cuenta"
+                                             process="@this cmbBancosN nunCuenta medioPago"
+                                             actionListener="#{mbClientesBueno.guardarCuentasBancarias()}"
+                                             update="growl :form:cmbBancos"
+                                             oncomplete="nuevaCuentaBancaria(xhr, status, args);"/>
+                            <p:commandButton oncomplete="dlgCuentasBancos.hide();"
+                                             title="Cancelar"
+                                             icon="ui-icon-arrowreturnthick-1-w"/>
+                        </div>
+                    </p:dialog>
+                </h:form>
+                <script>
+                    function nuevaDireccion(xhr, status, args) {
+                            if (args.validationFailed || !args.okContribuyente) {
+                            dlgDireccion.jq.effect("shake", {times: 5}, 100);
+                        }
+                        else {
+                    dlgDireccion.hide();
+                        }
+                        }
+                            function nuevoCliente(xhr, status, args) {
+                        if (args.validationFailed || !args.ok) {
+                            dlgClientes.jq.effect("shake", {times: 5}, 100);
+                        }
+                        else {
+                    dlgClientes.hide();
+                        }
+                    }
+                            function nuevaCuentaBancaria(xhr, status, args) {
+                        if (args.validationFailed || !args.ok) {
+                            dlgCuentasBancos.jq.effect("shake", {times: 5}, 100);
+                        }
+                        else {
+                    dlgCuentasBancos.hide();
+                        }
+                    }
+                            function nuevoContribuyente(xhr, status, args) {
+                        if (args.validationFailed || !args.ok) {
+                            dlgContribuyentes.jq.effect("shake", {times: 5}, 100);
+                        }
+                        else {
+                    dlgContribuyentes.hide();
+                        }
+                        }
+
+                        function validarRfc(xhr, status, args) {
+                            if (args.validationFailed || !args.ok) {
+                        }
+                        else {
+                    dlgContribuyentes.show();
+                        }
+                    }
+                </script>
+            </div>
+            <ui:include src="footer.html" />
+        </div>
+    </h:body>
+</html>
+

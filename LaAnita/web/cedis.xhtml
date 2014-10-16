@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" ></meta>
+        <title>Actualización de Cedis</title>
+         <h:outputStylesheet library="css" name="main.css"/>
+    </h:head>
+
+    <body>
+        <div id="wrapper" align="center">
+            <ui:include src="wrapper.xhtml" />
+            <div id="content" align="center"  >
+                <br></br>
+                <h:form >
+                    <p:messages id="msgs" showDetail="true" showSummary="false" />
+                    <p:panel header="MANTENIMIENTO DE CEDIS">
+
+                        <h:panelGrid id="panelCapturaCedis" frame="box" border="0" columns="3" >
+                            <h:outputLabel value="Código:"  style="font-weight: bold; width: 110px; color: red;" />
+                            <p:inputText id="codigo" readonly="#{mbCedis.cedis.idCedis > 0}" value="#{mbCedis.cedis.codigo}" maxlength="6" size="8" />
+                            <h:outputLabel/>
+
+                            <h:outputLabel value="Cedis:" for="cedis" style="font-weight: bold; color: red;" />
+                            <p:inputText id="cedis" value="#{mbCedis.cedis.cedis}" maxlength="100" size="50"
+                                         required="true"
+                                         requiredMessage="Ingrese el nombre del CEDIS"/>
+                            <h:outputLabel/>
+
+                            <h:outputLabel value="Teléfono:" for="telefono" style="font-weight: bold; color: red;"/>
+                            <p:inputMask id="telefono" value="#{mbCedis.cedis.telefono}" maxlength="10" size="15" mask="(999)9-99-99-99" 
+                                         required="true"
+                                         requiredMessage="Ingrese un Telefono"/>
+                            <h:outputLabel/>
+
+                            <h:outputLabel value="Fax:" for="fax" style="font-weight: bold; color: red;"/>
+                            <p:inputMask id="fax" value="#{mbCedis.cedis.fax}" maxlength="10" size="15"
+                                         mask="(999)9-99-99-99"/>
+                            <h:outputLabel/>
+
+                            <h:outputLabel value="eMail:" 
+                                           for="correo" 
+                                           style="font-weight: bold; color: red;"/>
+                            <p:inputText id="correo" value="#{mbCedis.cedis.correo}"
+                                         maxlength="100" 
+                                         size="50" 
+                                         required="true"
+                                         requiredMessage="Ingrese un correo electronico">
+                                <f:validator validatorId="EmailValidator"/>
+                            </p:inputText>
+                            <h:outputLabel/>
+
+                            <h:outputLabel value="Representante:" for="representante" style="font-weight: bold; color: red;"/>
+                            <p:inputText id="representante" value="#{mbCedis.cedis.representante}" maxlength="100" size="50" 
+                                         required="true"
+                                         requiredMessage="Ingrese un Representante"/>
+                            <h:outputLabel/>
+
+                            <h:outputLabel value="Dirección:" style="font-weight: bold; color: red;" />
+                            <p:inputTextarea id="txtAreaDirFisica" disabled="true" rows="5" cols="50" 
+                                                 value="#{mbCedis.cedis.direccion.toString()}"/>
+                                
+                            <p:commandButton icon="ui-icon-plusthick" title="Nuevo Cedis" 
+                                                         action="#{mbCedis.mbDireccion.mttoDireccion(mbCedis.cedis.direccion, 'cedis')}" 
+                                                         ajax="false" immediate="true" />
+                            <h:outputLabel />
+                            
+                            <h:panelGroup style="display: block; text-align: right" >
+                                <p:commandButton icon="ui-icon-disk" title="Grabar" ajax="false" action="#{mbCedis.grabar()}" />
+                                <p:commandButton icon="ui-icon-arrowreturnthick-1-w" title="Cancelar" 
+                                                 immediate="true" ajax="false" action="#{mbCedis.cancelar()}" />
+                            </h:panelGroup>
+                        </h:panelGrid>
+                    </p:panel>
+                </h:form>
+            </div>
+            <!-- FIN DE CONTENIDO -->
+            <ui:include src="footer.html" />
+        </div>
+    </body>
+</html>

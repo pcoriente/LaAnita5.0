@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:pe="http://primefaces.org/ui/extensions">
+    <h:head>
+        <h:outputStylesheet library="css" name="main.css"/>
+        <title>Relación de Clientes Grupos</title>
+    </h:head>
+    <body>
+        <div id="wrapper" align="center">
+            <ui:include src="wrapper.xhtml" />
+            <div id="content" align="center"  >
+                <br></br>
+                <h:form id="form" onkeypress="return event.keyCode !== 13;" >
+                    <p:growl id="growl" autoUpdate="true" showDetail="true"/>  
+                    <div align="right">
+                        <p:commandButton icon="ui-icon-document"
+                                         actionListener="#{mbClientesTienda.limpiarCampos()}"
+                                         update="txtCodigo txtCodigoCliente txtnombre cmbRutas cmbFormatos txtDireccion :form:panelCapturaDireccion"
+                                         oncomplete="dlgClientTienda.show();"
+                                         process="@this"/>
+                        <p:commandButton id="btnEditarClienteTienda" 
+                                         icon="ui-icon-pencil"
+                                         oncomplete="dlgClientTienda.show();"
+                                         process="@this"
+                                         disabled="#{mbClientesTienda.clienteTiendaSeleccionado==null}"/>
+                        <p:commandButton icon="ui-icon-arrowreturnthick-1-w"
+                                         ajax="false"
+                                         title="Salir"
+                                         immediate="true"
+                                         action="#{mbClientesBueno.salir()}"/>
+                    </div>
+                    <p:panel header="Grupo de Cliente" 
+                             styleClass="quitaCuadro">
+                        <p:dataTable id="tablaClientesTienda" 
+                                     value="#{mbClientesTienda.lstClientesGrupos}"
+                                     var="table"
+                                     selection="#{mbClientesTienda.clienteTiendaSeleccionado}"
+                                     selectionMode="single"
+                                     rowKey="#{table}"
+                                     emptyMessage="No hay Tiendas Disponibles">
+                            <p:ajax event="rowSelect"
+                                    process="@this"
+                                    listener="#{mbClientesTienda.cargarDatos()}"
+                                    update=":form:panelClientesTiendas 
+                                    :form:tablaClientesTienda 
+                                    :form:btnEditarClienteTienda
+                                    :form:panelCapturaDireccion
+                                    :form:calle"
+                                    />
+                            <p:column headerText="Codigo">
+                                #{table.codigoTienda}
+                            </p:column>
+                            <p:column headerText="Nombre">
+                                #{table.nombre}
+                            </p:column>
+                            <p:column headerText="Ruta">
+                                #{table.ruta.ruta}
+                            </p:column>
+                            <p:column headerText="Formato">
+                                #{table.formatos.formato}
+                            </p:column>
+                        </p:dataTable>
+                    </p:panel>
+                    <p:dialog header="Mantenimineto de Tiendas"
+                              widgetVar="dlgClientTienda"
+                              resizable="false"
+                              showEffect="explode"
+                              modal="true"
+                              hideEffect="explode"
+                              closable="false">
+                        <h:panelGrid columns="3"
+                                     id="panelClientesTiendas">
+                            <h:outputText value="Codigo:"/>
+                            <pe:inputNumber  id="txtCodigo"
+                                             emptyValue="zero"
+                                             decimalPlaces="0"
+                                             value="#{mbClientesTienda.clienteTienda.codigoTienda}"/>
+                            <h:outputLabel/>
+                            <h:outputText value="Nombre:"/>
+                            <p:inputText id="txtnombre"
+                                         value="#{mbClientesTienda.clienteTienda.nombre}"/>
+                            <h:outputLabel/>
+                            <h:outputText value="Direccion:"/>
+                            <p:inputTextarea id="txtDireccion"
+                                             rows="11"
+                                             style="width: 150px"
+                                             value="#{mbClientesTienda.clienteTienda.direccion}"
+                                             disabled="true"/>
+                            <p:commandButton icon="ui-icon-plus"
+                                             title="Nueva Direccion"
+                                             oncomplete="dlgDireccion.show();"/>
+                            <h:outputText value="Formato:"/>
+                            <p:selectOneMenu id="cmbFormatos"
+                                             style="width: 150px"
+                                             filter="true"
+                                             value="#{mbClientesTienda.mbFormatos.cmbFormato}">
+                                <f:selectItems value="#{mbClientesTienda.mbFormatos.lstItems}"/>
+                                <f:converter converterId="converters.formatos"/>
+                            </p:selectOneMenu>
+                            <p:commandButton icon="ui-icon-plus"
+                                             title="Mtt. Formatos"
+                                             process="@this cmbFormatos"
+                                             actionListener="#{mbClientesTienda.cargarFormatos()}"
+                                             oncomplete="dlgFormatos.show();" 
+                                             update=":form:panelFormatos"/>
+                            <h:outputText value="Ruta:"/>
+                            <p:selectOneMenu  id="cmbRutas" 
+                                              style="width: 150px"
+                                              filter="true"
+                                              value="#{mbClientesTienda.mbRutas.cmbRuta}">
+                                <f:selectItems value="#{mbClientesTienda.mbRutas.lstRuta}"/>
+                                <f:converter converterId="converter.rutas"/>
+                            </p:selectOneMenu>
+                            <p:commandButton icon="ui-icon-plus"
+                                             title="Mtt. Ruta"
+                                             process="@this cmbRutas"
+                                             actionListener="#{mbClientesTienda.cargarRutas()}"
+                                             oncomplete="dlgRutas.show();"
+                                             update=":form:panelRutas"/>
+                            <h:outputText value="Codigo Cliente:"/>
+                            <pe:inputNumber  emptyValue="zero"
+                                             decimalPlaces="0"
+                                             id="txtCodigoCliente"
+                                             value="#{mbClientesTienda.clienteTienda.codigoCliente}"/>
+                            <h:outputLabel/>
+                        </h:panelGrid>
+                        <div style="margin: auto">
+                            <p:commandButton icon="ui-icon-disk"
+                                             title="Guardar"
+                                             process="@this  txtCodigo txtCodigoCliente txtnombre cmbRutas cmbFormatos txtDireccion"
+                                             actionListener="#{mbClientesTienda.guardarClientesTiendas()}"
+                                             update="growl 
+                                             tablaClientesTienda 
+                                             btnEditarClienteTienda 
+                                             :form:panelFormatos
+                                             :form:panelRutas"
+                                             oncomplete="nuevoClienteTieda(xhr, status, args)"/>
+                            <p:commandButton icon="ui-icon-arrowreturnthick-1-w"
+                                             title="Salir"
+                                             actionListener="#{mbClientesTienda.limpiarCampos()}"
+                                             update="panelClientesTiendas 
+                                             tablaClientesTienda 
+                                             btnEditarClienteTienda
+                                             :form:panelFormatos
+                                             :form:panelRutas"
+                                             oncomplete="dlgClientTienda.hide();"/>
+                        </div>
+                    </p:dialog>
+                    <p:dialog  header="Nueva Dirección" 
+                               widgetVar="dlgDireccion"
+                               modal="true"
+                               resizable="false"
+                               closable="false">
+                        <h:panelGrid id="panelCapturaDireccion" columns="2">
+                            <h:outputLabel value="Calle:" for="calle"  styleClass="colorLetra" />
+                            <p:inputText  id="calle" value="#{mbClientesTienda.mbDireccion.direccion.calle}"/>
+                            <h:outputLabel value="No.Exterior:" styleClass="colorLetra"/>
+                            <p:inputText id="noExterior" value="#{mbClientesTienda.mbDireccion.direccion.numeroExterior}"/>
+                            <h:outputLabel value="No.Interior:" styleClass="colorLetra" />
+                            <p:inputText id="noInterior" value="#{mbClientesTienda.mbDireccion.direccion.numeroInterior}"/>
+                            <h:outputLabel value="Referencia:" styleClass="colorLetra" />
+                            <p:inputText id="referencia" value="#{mbClientesTienda.mbDireccion.direccion.referencia}"/>
+                            <h:outputLabel value="País:" styleClass="colorLetra"/>
+                            <p:selectOneMenu id="cboPaises" 
+                                             value="#{mbClientesTienda.mbDireccion.direccion.pais}"
+                                             style="width: 188px">
+                                <f:converter converterId="converters.Pais" />
+                                <f:selectItems value="#{mbDireccion.listaPaises}" />
+                            </p:selectOneMenu>
+                            <h:outputLabel value="Código Postal:" styleClass="colorLetra" />
+                            <h:panelGroup>
+                                <h:panelGrid columns="3">
+                                    <p:inputText id="codigoPostal" 
+                                                 value="#{mbClientesTienda.mbDireccion.direccion.codigoPostal}"/>
+                                    <p:commandButton  
+                                        title="Buscar Codigo Postal"
+                                        icon="ui-icon-search"
+                                        action="#{mbClientesTienda.mbDireccion.buscarAsentamientos()}" 
+                                        process="@this cboPaises codigoPostal" 
+                                        style="height: 30px"/>
+                                </h:panelGrid>
+                            </h:panelGroup>
+                            <h:outputLabel value="Colonia:" styleClass="colorLetra" />
+                            <h:panelGroup id="asentamientos">
+                                <h:panelGrid rendered="#{mbClientesTienda.mbDireccion.editarAsentamiento}" columns="2" >
+                                    <p:inputText id="txtAsentamiento" 
+                                                 value="#{mbClientesTienda.mbDireccion.direccion.colonia}"/>
+                                    <p:commandButton 
+                                        icon="ui-icon-pencil"
+                                        actionListener="#{mbClientesTienda.mbDireccion.setEditarAsentamiento(false)}" 
+                                        update="asentamientos"
+                                        title="Elegir Asentamiento"
+                                        process="@this"/>
+                                </h:panelGrid>
+                                <p:selectOneMenu id="cboAsentamientos" 
+                                                 rendered="#{!mbClientesTienda.mbDireccion.editarAsentamiento}" 
+                                                 value="#{mbClientesTienda.mbDireccion.direccion.selAsentamiento}" 
+                                                 style="width: 188px">
+                                    <p:ajax event="change" listener="#{mbClientesTienda.mbDireccion.actualizaAsentamiento}" 
+                                            update="estado municipio localidad  asentamientos" />             
+                                    <f:converter converterId="converters.Asentamiento" />
+                                    <f:selectItems value="#{mbClientesTienda.mbDireccion.listaAsentamientos}" />
+                                </p:selectOneMenu>
+                            </h:panelGroup>
+                            <h:outputLabel value="Ciudad/Localidad:" styleClass="colorLetra" />
+                            <p:inputText id="localidad" value="#{mbClientesTienda.mbDireccion.direccion.localidad}"/>
+                            <h:outputLabel value="Municipio/Delegación:" styleClass="colorLetra" />
+                            <p:inputText id="municipio" value="#{mbClientesTienda.mbDireccion.direccion.municipio}" />
+                            <h:outputLabel  value="Estado:" styleClass="colorLetra" />
+                            <p:inputText id="estado" value="#{mbClientesTienda.mbDireccion.direccion.estado}" />
+                            <h:outputLabel value="GLN:" styleClass="colorLetra" />
+                            <p:inputText id="gln" value="#{mbClientesTienda.mbDireccion.direccion.numeroLocalizacion}"/>
+                            <h:outputLabel />
+                            <h:panelGroup style="display: block; text-align: right" >
+                                <p:commandButton icon="#{mbAgentes.lblNuevaDireccionAgente}"
+                                                 actionListener="#{mbClientesTienda.validarDireccion()}"
+                                                 process="@this panelCapturaDireccion"
+                                                 title="Grabar Direccion"
+                                                 update=":form:txtDireccion growl"
+                                                 oncomplete="nuevaDireccion(xhr, status, args)" />
+                                <p:commandButton icon="ui-icon-arrowreturnthick-1-w"
+                                                 title="Cancelar Direccion"
+                                                 actionListener="#{mbClientesTienda.mbDireccion.cancelarDireccion()}"
+                                                 process="@this"
+                                                 oncomplete="dlgDireccion.hide();"/>
+                            </h:panelGroup>
+                        </h:panelGrid>
+                    </p:dialog>
+
+                    <p:dialog header="Mtto. Rutas"
+                              widgetVar="dlgRutas"
+                              modal="true">
+                        <h:panelGrid columns="2"
+                                     id="panelRutas">
+                            <h:outputText value="Formato:"/>
+                            <p:inputText id="txtRuta"  value="#{mbClientesTienda.mbRutas.ruta.ruta}"/>
+                        </h:panelGrid>
+                        <div style="margin: auto">
+                            <p:commandButton icon="ui-icon-disk"
+                                             title="Guardar Ruta"
+                                             actionListener="#{mbClientesTienda.guardarRutas()}"
+                                             process="@this txtRuta "
+                                             update="growl cmbRutas"
+                                             oncomplete="nuevaRuta(xhr, status, args);"/>
+                        </div>
+                    </p:dialog>
+
+                    <p:dialog widgetVar="dlgFormatos"
+                              header="Mantenimiento Formato"
+                              modal="true">
+                        <h:panelGrid columns="2"
+                                     id="panelFormatos">
+                            <h:outputText value="Formato:"/>
+                            <p:inputText id="txtFormato" 
+                                         value="#{mbClientesTienda.mbFormatos.formato.formato}"/>
+                            <h:outputText value="Grupo"/>
+                            <p:selectOneMenu style="width: 155px"
+                                             filter="true"
+                                             id="cmbClientesGrupos"
+                                             value="#{mbClientesTienda.mbFormatos.mbClientesGrupos.cmbClientesGrupos}">
+                                <f:selectItems value="#{mbClientesTienda.mbFormatos.mbClientesGrupos.itemsClientesGrupos}"/>
+                                <f:converter converterId="converters.ClientesGrupos"/>
+                            </p:selectOneMenu>
+                        </h:panelGrid>
+                        <div style="margin: auto">
+                            <p:commandButton icon="ui-icon-disk"
+                                             process="@this cmbClientesGrupos txtFormato"
+                                             actionListener="#{mbClientesTienda.guardarFormatos()}"
+                                             update="growl cmbFormatos"
+                                             oncomplete="nuevoFormato(xhr, status, args)"/>
+                        </div>
+                    </p:dialog>
+                </h:form>
+            </div>
+            <ui:include src="footer.html" />
+        </div>
+    </body>
+
+    <script>
+        function nuevaDireccion(xhr, status, args) {
+            if (args.validationFailed || !args.okContribuyente) {
+                dlgDireccion.jq.effect("shake", {times: 5}, 100);
+            }
+            else {
+                dlgDireccion.hide();
+            }
+        }
+        function nuevaRuta(xhr, status, args) {
+            if (args.validationFailed || !args.ok) {
+                dlgRutas.jq.effect("shake", {times: 5}, 100);
+            }
+            else {
+                dlgRutas.hide();
+            }
+        }
+        function nuevoFormato(xhr, status, args) {
+            if (args.validationFailed || !args.ok) {
+                dlgFormatos.jq.effect("shake", {times: 5}, 100);
+            }
+            else {
+                dlgFormatos.hide();
+            }
+        }
+        function nuevoClienteTieda(xhr, status, args) {
+            if (args.validationFailed || !args.ok) {
+                dlgClientTienda.jq.effect("shake", {times: 5}, 100);
+            }
+            else {
+                dlgClientTienda.hide();
+            }
+        }
+
+    </script>
+</html>

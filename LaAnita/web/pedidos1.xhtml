@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <h:outputStylesheet library="css" name="main.css"/>
+        <h:outputStylesheet library="css" name="estilos.css"/>
+
+        <title>Pedidos de Cedis</title>
+    </h:head>
+    <body>
+        <div id="wrapper" align="center">
+            <ui:include src="wrapper.xhtml" /> 
+
+            <div id="content" align="left" >
+                <h:form id="main" >
+                    <div align="right">
+                        <br></br>
+                        <h:commandButton action="#{mbPedido.rDetallePedido()}" value="Detalle"/>|
+                        <h:commandButton action="#{mbPedido.rEnvioEmpresa()}" value="EnvioA"/>|
+                        <h:commandButton action="#{mbPedido.rEnvioEmpresaQuimicos()}" value="EnvioQ"/>|
+                        <p:commandLink styleClass="nueva"  action="indice" value="Salir" ajax="false" />
+                    </div>
+                    <p:growl id="growl" showDetail="true" sticky="true" />
+                    <p:panel id="principal" header="PEDIDOS DE CEDIS" styleClass="quitaCuadro" style="float: left; width: 100%;" >
+                        <p:messages id="msgs" showDetail="true" />
+                        <div class="izquierdo">
+                            <h:panelGrid columns="2" >
+                                <h:outputLabel for="cedis" value="CEDIS :"  style="font-weight: bold; color: red; width: 60px;" />
+                                <p:selectOneMenu id="cedis" value="#{mbPedido.cedis}" >
+                                    <f:converter converterId="converters.MiniCedis" />
+                                    <f:selectItems value="#{mbPedido.listaCedis}" />
+                                    <p:ajax event="change" listener="#{mbPedido.actualizaListaPedidos}" 
+                                            update="growl nuevoPedido pedidos fechaGen diasInv btnCalcularDias listaProductos listaFincados btnBuscarProducto btnGrabar btnCancelar btnPrioridad pesoDirectos pesoBodega pesoTotal" />
+                                </p:selectOneMenu>
+                            </h:panelGrid>
+                            <h:panelGrid columns="5" >
+                                <h:outputLabel value="Pedido:" style="font-weight: bold; color: red; width: 60px;" />
+                                <p:selectOneMenu id="pedidos" value="#{mbPedido.pedido}" style="width: 110px;" disabled="#{mbPedido.pedido==null || mbPedido.pedido.cod_bod=='00' || mbPedido.pedido.cod_env=='000000'}" >
+                                    <f:converter converterId="converters.Pedido" />
+                                    <f:selectItems value="#{mbPedido.listaPedidos}" />
+                                    <p:ajax event="change" listener="#{mbPedido.obtenerPedido()}" 
+                                            update="growl nuevoPedido fechaGen diasInv btnCalcularDias listaProductos listaFincados btnBuscarProducto btnGrabar btnCancelar btnPrioridad pesoDirectos pesoBodega pesoTotal" />
+                                </p:selectOneMenu>
+                                <p:commandButton id="nuevoPedido" value="Generar" disabled="#{mbPedido.pedido==null || mbPedido.pedido.cod_bod=='00' || mbPedido.pedido.cod_env=='000000'}" 
+                                                 actionListener="#{mbPedido.nuevoPedido}" onclick="nvoPedido.disable();" widgetVar="nvoPedido"
+                                                 update="growl nuevoPedido pedidos fechaGen diasInv btnCalcularDias listaProductos listaFincados btnBuscarProducto btnGrabar btnCancelar btnPrioridad pesoDirectos pesoBodega pesoTotal" />
+                                <h:outputLabel value="Fecha Generación:"  style="font-weight: bold; color: red;" />
+                                <p:inputText id="fechaGen" value="#{mbPedido.pedido.fechagen}" readonly="true" maxlength="10" size="11" />
+                            </h:panelGrid>
+                        </div>
+                        <br />
+                        <p:panel header="PEDIDOS FINCADOS">
+                            <p:dataTable id="listaFincados" value="#{mbPedido.listaFincados}" var="fincado" editable="#{mbPedido.pedido.estado=='A'}" 
+                                         scrollable="true" scrollHeight="170"
+                                         rowKey="#{fincado.cod_ped}" selection="#{mbPedido.fincado}" selectionMode="single" >
+                                <p:ajax event="rowSelect" update=":main:btnEditarFincado" />
+
+                                <p:column headerText="Emp" id="cod_emp" style="width: 45px;" >  
+                                    <h:outputText value="#{fincado.cod_emp}" />  
+                                </p:column>
+
+                                <p:column headerText="Codigo" id="codCli" style="width: 60px;" >  
+                                    <h:outputText value="#{fincado.cod_cli}" />  
+                                </p:column>
+
+                                <p:column headerText="Cliente" id="cliente" style="width: 320px;" >
+                                    <h:outputText value="#{fincado.tienda}" />
+                                </p:column>
+
+                                <p:column headerText="Pedido" id="numPedido" style="width: 65px;" >
+                                    <h:outputText value="#{fincado.cod_ped}" />
+                                </p:column>
+
+                                <p:column headerText="Peso" id="peso" style="width: 70px;" >
+                                    <h:outputText value="#{mbPedido.Round(fincado.peso, 3)}" />
+                                </p:column>
+
+                                <p:column headerText="Agregado" style="width:75px;">
+                                    <p:cellEditor>
+                                        <f:facet name="output">
+                                            <h:outputText value="#{fincado.agregado ? 'Si' : 'No'}" />
+                                        </f:facet>
+                                        <f:facet name="input">
+                                            <p:selectBooleanCheckbox value="#{fincado.agregado}" >
+                                                <p:ajax event="change" listener="#{mbPedido.actualizaFincadoProductos(fincado.cod_ped, fincado.cod_cli, fincado.cod_emp, fincado.agregado, fincado.directo)}" 
+                                                        update="txtOrden peso :main:btnEditarFincado :main:listaProductos :main:pesoDirectos :main:pesoBodega :main:pesoTotal" />
+                                            </p:selectBooleanCheckbox>
+                                        </f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+
+                                <p:column headerText="Directo" style="width:60px;">
+                                    <p:cellEditor>
+                                        <f:facet name="output">
+                                            <h:outputText value="#{fincado.directo ? 'Si' : 'No'}" />
+                                        </f:facet>
+                                        <f:facet name="input">
+                                            <p:selectBooleanCheckbox value="#{fincado.directo}" >
+                                                <p:ajax event="change" listener="#{mbPedido.cambiaFincadoDirecto()}" 
+                                                        update="@this :main:listaProductos :main:pesoDirectos :main:pesoBodega :main:pesoTotal" />
+                                            </p:selectBooleanCheckbox>
+                                        </f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+
+                                <p:column headerText="Orden" style="width:55px;">
+                                    <p:cellEditor>
+                                        <f:facet name="output">
+                                            <h:outputText value="#{fincado.orden}" />
+                                        </f:facet>
+                                        <f:facet name="input">
+                                            <p:inputText id="txtOrden" value="#{fincado.orden}" disabled="#{not (fincado.agregado and fincado.directo)}" style="width:100%"/>
+                                        </f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+
+                                <p:column headerText="Edit" style="width:40px">
+                                    <p:rowEditor />
+                                </p:column>
+                            </p:dataTable>
+                            <p:separator id="separator"/>
+                            <p:commandButton id="btnEditarFincado" disabled="#{not mbPedido.fincado.agregado}" value="Editar" update=":main:lstFincadoDetalle"
+                                             actionListener="#{mbPedido.obtenerFincadoProductos()}" onclick="editarFincadoDlg.show()" />
+                        </p:panel>
+                        <br />
+                        <p:panel header="DETALLE DEL PEDIDO">
+                            <h:panelGrid columns="3">
+                                <h:outputLabel for="diasInv" value="Dias Inv. Entregar:"  style="font-weight: bold; color: red; width: 130px;" />
+                                <p:inputText id="diasInv" value="#{mbPedido.pedido.diasInventario}" readonly="#{mbPedido.pedido.soloLectura}" maxlength="3" size="3">
+                                    <p:ajax event="change" listener="#{mbPedido.actualizaDiasInventarioGeneral}" update="listaProductos pesoDirectos pesoBodega pesoTotal" />
+                                </p:inputText>
+                                <p:commandButton id="btnCalcularDias" disabled="#{mbPedido.pedido.estado!='A'}" type="button" value="Calcular Dias Inventario" onclick="calcularDiasInvDlg.show()" />
+                            </h:panelGrid>
+                            <p:dataTable var="producto" value="#{mbPedido.listaPedidoDetalle}" id="listaProductos" 
+                                         scrollable="true" scrollHeight="340"
+                                         editable="#{mbPedido.pedido.estado=='A'}">
+                                <p:column headerText="Emp" id="codEmp" style="width: 45px;" >  
+                                    <h:outputText value="#{producto.cod_emp}" />  
+                                </p:column>
+
+                                <p:column headerText="Código" id="codPro" style="width: 75px;" >
+                                    <h:outputText value="#{producto.cod_pro}" />
+                                </p:column>
+
+                                <p:column headerText="Descripción" id="descripcion" style="width: 135px;" >
+                                    <h:outputText value="#{producto.descripcion}" />
+                                </p:column>
+
+                                <p:column headerText="Stats" id="estadist" style="width: 75px; text-align: right" >
+                                    <h:outputText value="#{mbPedido.Round(producto.estadistica,3)}" />
+                                </p:column>
+
+                                <p:column headerText="Existen" id="existen" style="width: 70px; text-align: right" >
+                                    <h:outputText value="#{mbPedido.Round(producto.existencia/producto.pzasepq, 3)}" />
+                                </p:column>
+
+                                <p:column headerText="D.Inv." style="width:50px; text-align: right">
+                                    <p:cellEditor>
+                                        <f:facet name="output">
+                                            <h:outputText value="#{producto.diasInventario}" />
+                                        </f:facet>
+                                        <f:facet name="input">
+                                            <p:inputText id="diasInventario" value="#{producto.diasInventario}" style="width:100%" disabled="#{producto.estadistica==0}" >
+                                                <p:ajax event="change" listener="#{mbPedido.actualizaDiasInventarioProducto(producto.cod_emp, producto.cod_pro)}" 
+                                                        update="pedido diasInventario idCajas :main:pesoBodega :main:pesoTotal" />
+                                            </p:inputText>
+                                        </f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+
+                                <p:column headerText="Precio" id="precio" style="width: 60px; text-align: right" >
+                                    <h:outputText value="#{producto.precio}" />
+                                </p:column>
+
+                                <p:column headerText="Fincad" id="fincado" style="width: 60px; text-align: right" >
+                                    <h:outputText value="#{mbPedido.Round(producto.fincado/producto.pzasepq, 3)}" />
+                                </p:column>
+
+                                <p:column headerText="Direct" id="directa" style="width: 60px; text-align: right" >
+                                    <h:outputText value="#{mbPedido.Round(producto.directa/producto.pzasepq, 3)}" />
+                                </p:column>
+
+                                <p:column headerText="Pedido" id="pedido" style="width: 60px; text-align: right" >
+                                    <h:outputText value="#{mbPedido.Round(producto.pedido/producto.pzasepq, 3)}" />
+                                </p:column>
+
+                                <p:column headerText="Cajas" id="cajas" style="width:60px; text-align: right">
+                                    <p:cellEditor >
+                                        <f:facet name="output">
+                                            <h:outputText value="#{producto.cajas}" style="" />
+                                        </f:facet>
+                                        <f:facet name="input" >
+                                            <p:inputText id="idCajas" value="#{producto.cajas}" style="width:100%" >
+                                                <p:ajax event="change" listener="#{mbPedido.actualizaDetalleCajas(producto.cod_emp, producto.cod_pro)}" 
+                                                        update=":main:growl pedido diasInventario idCajas :main:pesoBodega :main:pesoTotal" />
+                                            </p:inputText>
+                                        </f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+
+                                <p:column headerText="Edit" style="width:40px">
+                                    <p:rowEditor />
+                                </p:column>
+                            </p:dataTable>
+                        </p:panel>
+                        <br />
+                        <p:panelGrid styleClass="sinBorde" >
+                            <p:row >
+                                <p:column colspan="2" style="border: none" ><p:commandButton id="btnBuscarProducto" 
+                                                                                             actionListener="#{mbPedido.mbBuscar.limpiaBuscar}" 
+                                                                                             update="listaEncontrados"
+                                                                                             value="Buscar Producto" disabled="#{mbPedido.pedido.estado!='A'}" 
+                                                                                             onclick="buscarProductoDlg.show()" /></p:column>
+                                <p:column colspan="2" style="border: none" ></p:column>
+                                <p:column style="border: none" ><h:outputText value="Peso Bodega :" /></p:column>
+                                <p:column style="border: none" ><h:outputText id="pesoBodega" value="#{mbPedido.Round(mbPedido.pesoBodega, 3)}" /></p:column>
+                            </p:row>
+                            <p:row >
+                                <p:column colspan="4" style="border: none" ></p:column>
+                                <p:column style="border: none" ><h:outputText value="Peso Directos :" /></p:column>
+                                <p:column style="border: none" ><h:outputText id="pesoDirectos" value="#{mbPedido.Round(mbPedido.pesoDirectos,3)}" /></p:column>
+                            </p:row>
+                            <p:row >
+                                <p:column style="border: none" ><p:commandButton id="btnGrabar" onclick="btnGrabarWid.disable();" widgetVar="btnGrabarWid" 
+                                                                                 value="Grabar" disabled="#{mbPedido.pedido.estado!='A'}" actionListener="#{mbPedido.grabar}" 
+                                                                                 update="growl btnGrabar pedidos nuevoPedido fechaGen diasInv listaFincados listaProductos pesoBodega pesoDirectos pesoTotal" /></p:column>
+                                <p:column style="border: none" >
+                                    <p:commandButton id="btnCancelar" value="Cancelar" disabled="#{mbPedido.pedido.estado!='A'}" actionListener="#{mbPedido.cancelar}" 
+                                                     update="growl pedidos nuevoPedido fechaGen diasInv listaFincados listaProductos pesoBodega pesoDirectos pesoTotal" />
+                                </p:column>
+                                <p:column style="border: none" ><p:commandButton id="btnPrioridad" disabled="#{mbPedido.pedido==null || mbPedido.pedido.cod_bod=='00' || mbPedido.pedido.estado!='A'}" value="Prioridad" update="listaEnvios" onclick="prioridadEnviosDlg.show()" /></p:column>
+                                <p:column style="border: none" ><p:commandButton id="btnReportes" value="Reporte" /></p:column>
+                                <p:column style="border: none" ><h:outputText value="Peso Total :" /></p:column>
+                                <p:column style="border: none" ><h:outputText id="pesoTotal" value="#{mbPedido.Round(mbPedido.pesoDirectos+mbPedido.pesoBodega,3)}" /></p:column>
+                            </p:row>
+                        </p:panelGrid>
+                        <br />
+                        <p:outputPanel id="despliegaSeleccionado" style="display:block;margin-top:10px;">
+                            <p:panelGrid id="seleccionado" rendered="#{not empty mbPedido.mbBuscar.producto.cod_pro}" style="margin-top:20px;">
+                                <f:facet name="header">
+                                    <p:row>
+                                        <p:column colspan="3">PRODUCTO SELECCIONADO</p:column>
+                                    </p:row>
+                                    <p:row>
+                                        <p:column >Emp</p:column>  
+                                        <p:column >Código</p:column>  
+                                        <p:column >Descripción</p:column>  
+                                    </p:row>
+                                </f:facet>
+
+                                <p:row>
+                                    <p:column ><h:outputText value="#{mbPedido.mbBuscar.producto.cod_emp}" /></p:column>
+                                    <p:column ><h:outputText value="#{mbPedido.mbBuscar.producto.cod_pro}" /></p:column>
+                                    <p:column ><h:outputText value="#{mbPedido.mbBuscar.producto.descripcion}" /></p:column>
+                                </p:row>
+
+                                <f:facet name="footer">
+                                    <p:row>
+                                        <p:column colspan="3">
+                                            <p:commandButton id="agregar" value="Añadir" actionListener="#{mbPedido.agregarProducto}" update=":main:despliegaSeleccionado listaProductos" />
+                                            <p:commandButton id="cancelar" value="Cancelar" actionListener="#{mbPedido.cancelarProducto}" update=":main:despliegaSeleccionado" />
+                                        </p:column>
+                                    </p:row>
+                                </f:facet>
+                            </p:panelGrid>
+                        </p:outputPanel>
+                    </p:panel>
+                    <p:dialog header="EDITAR DETALLE DE PEDIDO FINCADO" widgetVar="editarFincadoDlg" resizable="false" style="width: 655px;" >
+                        <p:dataTable scrollable="true" scrollHeight="250"
+                                     var="fincadoDetalle" value="#{mbPedido.listaFincadoDetalle}" id="lstFincadoDetalle" editable="#{mbPedido.pedido.estado=='A'}" >
+
+                            <p:column headerText="Código" style="width: 70px;" >
+                                <h:outputText value="#{fincadoDetalle.cod_pro}" />
+                            </p:column>
+
+                            <p:column headerText="Descripción" style="width: 300px;" >
+                                <h:outputText value="#{fincadoDetalle.descripcion}" />
+                            </p:column>
+
+                            <p:column headerText="Cantidad" style="width: 70px;" >
+                                <h:outputText value="#{mbPedido.Round(fincadoDetalle.cantPed/fincadoDetalle.pzasepq, 3)}" />
+                            </p:column>
+
+                            <p:column headerText="Peso" style="width: 70px;" >
+                                <h:outputText value="#{mbPedido.Round(fincadoDetalle.cantPed*fincadoDetalle.peso, 3)}" />
+                            </p:column>
+
+                            <p:column headerText="Agregado" style="width:75px;">
+                                <p:cellEditor>
+                                    <f:facet name="output">
+                                        <h:outputText value="#{fincadoDetalle.agregado ? 'Si' : 'No'}" />
+                                    </f:facet>
+                                    <f:facet name="input">
+                                        <p:selectBooleanCheckbox value="#{fincadoDetalle.agregado}" style="width: 100%" >
+                                            <p:ajax event="change" listener="#{mbPedido.actualizaFincadoProducto(fincadoDetalle.cod_emp, fincadoDetalle.cod_pro, fincadoDetalle.orden, fincadoDetalle.agregado)}" 
+                                                    update=":main:listaFincados :main:listaProductos :main:pesoDirectos :main:pesoBodega :main:pesoTotal" />
+                                        </p:selectBooleanCheckbox>
+                                    </f:facet>
+                                </p:cellEditor>
+                            </p:column>
+
+                            <p:column headerText="Edit" style="width:40px">
+                                <p:rowEditor />
+                            </p:column>
+                        </p:dataTable>
+                    </p:dialog>
+                    <p:dialog header="BUSCAR PRODUCTO" widgetVar="buscarProductoDlg" resizable="false" style="width: 600px;" >  
+                        <h:panelGrid columns="3" style="margin-bottom:10px;">
+                            <h:outputLabel value="Opciones:" style="font-weight: bold; color: red;" />  
+                            <p:selectOneRadio id="options" value="#{mbPedido.mbBuscar.tipoBusqueda}" style="background-color: #ccc" >
+                                <f:selectItem itemLabel="Descripción" itemValue="1" />
+                                <f:selectItem itemLabel="Código" itemValue="2" />
+                            </p:selectOneRadio>
+                            <h:outputLabel value=""/>
+
+                            <h:outputLabel value="Producto:" style="font-weight: bold; color: red;" />
+                            <p:inputText id="producto" value="#{mbPedido.mbBuscar.cadena}" size="30" />
+                            <p:commandButton id="btnBuscar" value="Buscar" actionListener="#{mbPedido.mbBuscar.buscar}" update="listaEncontrados" />
+                        </h:panelGrid>
+                        <br />
+                        <p:dataTable var="producto" value="#{mbPedido.mbBuscar.listaEncontrados}" id="listaEncontrados" 
+                                     scrollable="true" scrollHeight="200" style="width: 500px;"
+                                     rowKey="#{producto.cod_emp+producto.cod_pro}" selection="#{mbPedido.mbBuscar.producto}" >
+                            <f:facet name="header">  
+                                Seleccione un producto  
+                            </f:facet>  
+
+                            <p:column selectionMode="single" style="width:40px" />  
+
+                            <p:column headerText="Emp" style="width: 50px" >
+                                <h:outputText value="#{producto.cod_emp}" />
+                            </p:column>
+
+                            <p:column headerText="Código" style="width: 80px;" >
+                                <h:outputText value="#{producto.cod_pro}" />
+                            </p:column>
+
+                            <p:column headerText="Descripción" style="width: 320px;" >
+                                <h:outputText value="#{producto.descripcion}" />
+                            </p:column>
+
+                            <f:facet name="footer">  
+                                <p:commandButton id="seleccion" value="Seleccionar" icon="ui-icon-search" 
+                                                 update=":main:despliegaSeleccionado"
+                                                 oncomplete="buscarProductoDlg.hide()" />  
+                            </f:facet>
+                        </p:dataTable>
+                    </p:dialog>
+                    <p:dialog header="PRIORIDAD DE ENVIOS" widgetVar="prioridadEnviosDlg" resizable="false" style="width: 700px;" >  
+                        <p:dataTable var="envio" value="#{mbPedido.listaEnvios}" id="listaEnvios" rowKey="#{envio.cod_bod+envio.cod_env}" 
+                                     editable="true" scrollable="true" scrollHeight="150" >
+                            <p:column headerText="Bodega" style="width: 65px;" >
+                                <h:outputText value="#{envio.cod_bod}" />
+                            </p:column>
+
+                            <p:column headerText="Envío" style="width: 62px;" >
+                                <h:outputText value="#{envio.cod_env}" />
+                            </p:column>
+
+                            <p:column headerText="Fecha" style="width: 82px;" >
+                                <h:outputText value="#{envio.fechaGen}" />
+                            </p:column>
+
+                            <p:column headerText="Prioridad" style="width: 80px;" >
+                                <p:cellEditor>
+                                    <f:facet name="output">
+                                        <h:outputText value="#{envio.prioridad}" style="text-align: right;" />
+                                    </f:facet>
+                                    <f:facet name="input">
+                                        <p:inputText value="#{envio.prioridad}" style="width:100%" />
+                                    </f:facet>
+                                </p:cellEditor>
+                            </p:column>
+
+                            <p:column headerText="Edit" style="width: 50px;" >
+                                <p:rowEditor />
+                            </p:column>
+
+                            <f:facet name="footer">
+                                <p:commandButton id="grabarPrioridades" value="Grabar" icon="ui-icon-search" 
+                                                 actionListener="#{mbPedido.grabarPrioridades}" oncomplete="prioridadEnviosDlg.hide()" />  
+                            </f:facet>
+                        </p:dataTable>
+                    </p:dialog>
+                    <p:dialog header="CALCULO DIAS INVENTARIO" widgetVar="calcularDiasInvDlg" resizable="false" >
+                        <p:panelGrid columns="3" >
+                            <h:outputLabel value="Capacidad del Camión:" style="font-weight: bold; color: red;" />
+                            <p:inputText id="capacidad" value="#{mbPedido.capacidadCamion}" size="6" />
+                            <p:commandButton id="btnCalcularDiasInv" value="Calcular" actionListener="#{mbPedido.calcularDiasInv()}" 
+                                             update=":main:diasInv :main:listaProductos :main:pesoBodega :main:pesoTotal" 
+                                             oncomplete="calcularDiasInvDlg.hide()" />
+                        </p:panelGrid>
+                    </p:dialog>
+                </h:form>
+            </div>
+
+            <!-- FIN DE CONTENIDO -->
+            <ui:include src="footer.html" />
+        </div>
+    </body>
+</html>
+

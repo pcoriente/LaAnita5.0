@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"></meta>
+        <title>Ventas</title>
+        <h:outputStylesheet library="css" name="main.css"/>
+    </h:head>
+    <body>
+        <div id="wrapper" align="center">
+            <ui:include src="wrapper.xhtml"></ui:include>
+            <div id="content" align="left">
+                <h:form id="main" onkeypress="return event.keyCode !== 13;">
+                    <p:messages id="msgs" showDetail="true" showSummary="false" closable="true" />
+                    <p:panel id="encabezado" header="VENTAS"
+                             rendered="#{not empty mbVentas.obtenerAcciones(29) and not mbVentas.modoEdicion}">
+                        <p:panelGrid id="encabezadoVenta" >
+                            <p:row >
+                                <p:column >
+                                    <h:outputLabel value="ALMACEN :" style="font-weight: bold; color: red;" />
+                                </p:column>
+                                <p:column colspan="2" >
+                                    <p:selectOneMenu id="almacen" value="#{mbVentas.mbComprobantes.mbAlmacenes.toAlmacen}" style="width: 450px;" >
+                                        <f:converter converterId="converters.TOAlmacenJSConverter" />
+                                        <f:selectItems value="#{mbVentas.mbComprobantes.mbAlmacenes.listaAlmacenes}" />
+                                        <p:ajax event="change" update=":main:msgs" />
+                                    </p:selectOneMenu>
+                                </p:column>
+                            </p:row>
+                            <p:row >
+                                <p:column >
+                                    <h:outputLabel value="CLIENTE :" style="font-weight: bold; color: red;" />
+                                </p:column>
+                                <p:column colspan="2" >
+                                    <p:selectOneMenu id="clientes" value="#{mbVentas.mbClientes.cliente}" style="width: 450px;" >
+                                        <f:converter converterId="converters.miniCliente" />
+                                        <f:selectItems value="#{mbVentas.mbClientes.listaClientes}" />
+                                        <p:ajax event="change" listener="#{mbVentas.cargaTiendas()}" update=":main:msgs tiendas" />
+                                    </p:selectOneMenu>
+                                </p:column>
+                            </p:row>
+                            <p:row >
+                                <p:column >
+                                    <h:outputLabel value="TIENDA :" style="font-weight: bold; color: red;" />
+                                </p:column>
+                                <p:column >
+                                    <p:selectOneMenu id="tiendas" value="#{mbVentas.mbTiendas.miniTienda}" style="width: 450px;" >
+                                        <f:converter converterId="converters.miniTienda" />
+                                        <f:selectItems value="#{mbVentas.mbTiendas.listaTiendas}" />
+                                        <p:ajax event="change" update=":main:msgs" />
+                                    </p:selectOneMenu>
+                                </p:column>
+                                <p:column >
+                                    <p:commandButton id="btnEditar" icon="ui-icon-document" title="Comenzar captura" 
+                                                     process="@this" actionListener="#{mbVentas.capturar()}" update="main" />
+                                    <p:commandButton id="btnTerminar" icon="ui-icon-home" title="Salir" 
+                                                     process="@this" action="#{mbVentas.terminar()}" />
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </p:panel>
+                </h:form>
+            </div>
+        </div>
+    </body>
+</html>
