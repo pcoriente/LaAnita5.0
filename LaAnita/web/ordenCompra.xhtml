@@ -54,7 +54,7 @@
                                 </p:column>
                                 <p:column rendered="#{frmOrdenCompra.mbBuscarProd.tipoBuscar=='2'}" >
                                     <p:autoComplete id="opcionParte" value="#{frmOrdenCompra.mbBuscarProd.parte}" maxlength="50" size="30"
-                                                    completeMethod="#{frmOrdenCompra.mbBuscarProd.completePartes}" process="@this"
+                                                    completeMethod="#{frmOrdenCompra.mbBuscarProd.completePartes}" 
                                                     var="p" itemLabel="#{p.parte}" itemValue="#{p}" converter="converters.ParteBuscar" 
                                                     forceSelection="true" />
                                     <p:commandButton id="btnBuscarLista" icon="ui-icon-check" title="Buscar" 
