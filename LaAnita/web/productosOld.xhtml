@@ -603,7 +603,7 @@
                                 </p:column>
                                 <p:column rendered="#{mbProductoOld.mbBuscarProd.tipoBuscar=='2'}" >
                                     <p:autoComplete id="opcionParte" value="#{mbProductoOld.mbBuscarProd.parte}" maxlength="50" size="30"
-                                                    completeMethod="#{mbProductoOld.mbBuscarProd.completePartes}" process="@this"
+                                                    completeMethod="#{mbProductoOld.mbBuscarProd.completePartes}" 
                                                     var="p" itemLabel="#{p.parte}" itemValue="#{p}" converter="converters.ParteBuscar" 
                                                     forceSelection="true" />
                                     <p:commandButton id="btnBuscarLista" value="Buscar" 

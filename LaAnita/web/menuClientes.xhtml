@@ -85,7 +85,6 @@
                         <h:panelGrid columns="3" id="panelClientes">
                             <h:outputLabel styleClass="colorLetra" value="Rfc Contribuyente: "/>
                             <p:autoComplete  id="txtRfcCliente" 
-                                             process="@this"
                                              value="#{mbClientesBueno.cliente.contribuyente.rfc}"
                                              completeMethod="#{mbClientesBueno.completarClientes}"
                                              maxResults="3"/>

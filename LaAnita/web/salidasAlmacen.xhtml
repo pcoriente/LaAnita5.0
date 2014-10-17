@@ -200,7 +200,7 @@
                                 </p:column>
                                 <p:column rendered="#{mbSalidasAlmacen.mbBuscar.tipoBuscar=='2'}" >
                                     <p:autoComplete id="opcionParte" value="#{mbSalidasAlmacen.mbBuscar.mbParte.parte}" maxlength="24" size="24"
-                                                    completeMethod="#{mbSalidasAlmacen.mbBuscar.mbParte.completePartes}" process="@this"
+                                                    completeMethod="#{mbSalidasAlmacen.mbBuscar.mbParte.completePartes}" 
                                                     var="p" itemLabel="#{p.parte}" itemValue="#{p}" converter="converters.Parte" 
                                                     forceSelection="true" />
                                     <p:commandButton id="btnBuscarLista" icon="ui-icon-check" title="Buscar" 
