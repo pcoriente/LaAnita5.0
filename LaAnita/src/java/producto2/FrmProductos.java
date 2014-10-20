@@ -59,6 +59,23 @@ public class FrmProductos implements Serializable {
         this.producto=new Producto();
     }
     
+//    public void grabarParte() {
+//        boolean ok=false;
+//        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "");
+//        try {
+//            if(this.mbArticulos.getMbParte().grabar()) {
+//                ok=true;
+//            }
+//        } catch (NamingException ex) {
+//            fMsg.setDetail(ex.getMessage());
+//        } catch (SQLException ex) {
+//            fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
+//        }
+//        if(!ok) {
+//            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+//        }
+//    }
+    
     public void eliminarParte() {
         this.mbArticulos.getMbParte().setParte(this.mbArticulos.getArticulo().getParte());
         if(this.mbArticulos.getMbParte().eliminar()) {
