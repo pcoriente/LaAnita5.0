@@ -36,6 +36,22 @@ public class DAOPartes {
         }
     }
     
+    public Parte obtenerParte(String str) throws SQLException {
+        Parte parte=null;
+        String strSQL="SELECT idParte, parte FROM productosPartes WHERE parte='"+parte+"'";
+        Connection cn=ds.getConnection();
+        Statement st=cn.createStatement();
+        try {
+            ResultSet rs=st.executeQuery(strSQL);
+            if(rs.next()) {
+                parte=new Parte(rs.getInt("idparte"), rs.getString("parte"));
+            }
+        } finally {
+            cn.close();
+        }
+        return parte;
+    }
+    
     public Parte obtenerParte(int idParte) throws SQLException {
         Parte parte=null;
         String strSQL="SELECT idParte, parte FROM productosPartes WHERE idParte="+idParte;

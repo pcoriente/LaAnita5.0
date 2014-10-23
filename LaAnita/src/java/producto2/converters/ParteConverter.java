@@ -1,5 +1,6 @@
 package producto2.converters;
 
+import java.sql.SQLException;
 import java.util.ResourceBundle;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -32,9 +33,20 @@ public class ParteConverter implements Converter {
                 DAOPartes dao=new DAOPartes();
                 if(error) {
                     idParte=dao.agregar(value.toUpperCase().trim());
+                    FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "");
+                    fMsg.setDetail("La generico se ha dado de alta !!!");
+                    FacesContext.getCurrentInstance().addMessage(null, fMsg);
                 }
                 parte=dao.obtenerParte(idParte);
             }
+        } catch(SQLException ex) {
+            FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "");
+            if(ex.getErrorCode()==2601) {
+                fMsg.setDetail("El generico ya existe !!!");
+            } else {
+                fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
+            }
+            FacesContext.getCurrentInstance().addMessage(null, fMsg);
         } catch(Throwable ex) {
             ResourceBundle bundle = ResourceBundle.getBundle("messages");
             FacesMessage msg = new FacesMessage(bundle.getString("Mensaje_conversion_Parte_getAsObject"));

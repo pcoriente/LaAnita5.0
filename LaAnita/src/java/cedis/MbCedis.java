@@ -30,6 +30,7 @@ public class MbCedis implements Serializable {
     @ManagedProperty(value="#{mbAcciones}")
     private MbAcciones mbAcciones;
     private ArrayList<Cedis> listaCedis;
+    private ArrayList<Cedis> cedisFiltrados;
     private DAOCedis dao;
     
     public MbCedis() {
@@ -96,6 +97,7 @@ public class MbCedis implements Serializable {
         if (this.cedis.getIdCedis() == 0 && this.cedis.getDireccion().getIdDireccion() > 0) {
             mbDireccion.eliminar(this.cedis.getDireccion().getIdDireccion());
         }
+//        this.cedisFiltrados=null;
         return "cedis.salir";
     }
     
@@ -214,5 +216,13 @@ public class MbCedis implements Serializable {
 
     public void setMbAcciones(MbAcciones mbAcciones) {
         this.mbAcciones = mbAcciones;
+    }
+
+    public ArrayList<Cedis> getCedisFiltrados() {
+        return cedisFiltrados;
+    }
+
+    public void setCedisFiltrados(ArrayList<Cedis> cedisFiltrados) {
+        this.cedisFiltrados = cedisFiltrados;
     }
 }
