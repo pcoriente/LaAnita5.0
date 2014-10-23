@@ -447,7 +447,7 @@
         <script>
                     function nuevoClienteGrupo(xhr, status, args) {
                         if (args.validationFailed || !args.ok) {
-                            dlgClientesGrupos.jq.effect("shake", {times: 5}, 100);
+                          PF('dlgClientesGrupos')  .jq.effect("shake", {times: 5}, 100);
                         }
                         else {
                             PF('dlgClientesGrupos').hide();
