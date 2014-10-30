@@ -87,7 +87,7 @@
                                                  title="Ver Detalle"
                                                  actionListener="#{(mbRequisiciones.requisicionMas(req.idRequisicion))}"
                                                  update=":form:detalle"  
-                                                 oncomplete="reqDialog.show()" 
+                                                 oncomplete="PF('reqDialog').show();" 
 
                                                  />
 
@@ -95,7 +95,7 @@
                                     id="btnAprobar"
                                     icon="ui-icon-pencil"
                                     update=":form:pgCabecero :form:detalleAprobar"
-                                    oncomplete="aprobarDialog.show()"
+                                    oncomplete="PF('aprobarDialog').show();"
                                     title="Procedimiento de aprobación"
                                     actionListener="#{mbRequisiciones.cargaRequisicionesDetalleAprobar(req.idRequisicion)}"
                                     style="margin:0 auto;" 
@@ -237,11 +237,10 @@
                             </p:column>
                             <p:column headerText="Procesos" style="width: 120px"   >
                                 <p:rowEditor   />
+                                
                                 <p:toolbar id="tb" style="width: 80px; margin:0 auto;" >
-
-                                    <p:toolbarGroup style="margin:0 auto;" > 
-
-                                        <p:commandButton 
+                                    <f:facet name="right">
+                                         <p:commandButton 
                                             id="btnEliminarProducto"
                                             icon="ui-icon-trash"
                                             title="Eliminar Producto"
@@ -262,7 +261,8 @@
                                             style="margin:0 auto;"
                                             disabled="#{da.cantidadAutorizada > 0 }"
                                             />
-                                    </p:toolbarGroup >  
+                                        
+                                    </f:facet>
                                 </p:toolbar>  
                             </p:column>
 

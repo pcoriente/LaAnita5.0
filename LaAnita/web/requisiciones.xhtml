@@ -69,8 +69,9 @@
 
                         </h:panelGrid >   
 
-                        <p:toolbar id="tb" style="width: 845px; margin:0 auto;" >  
-                            <p:toolbarGroup align="right">  
+                        <p:toolbar id="tb" style="width: 845px; margin:0 auto;" >
+                            <f:facet name="right">
+
                                 <p:commandButton
                                     icon="ui-icon-disk"
                                     title="Guardar requerimiento"
@@ -81,13 +82,18 @@
                                     />
                                 <p:separator />
                                 <p:commandButton icon="ui-icon-trash"
+                                                
                                                  title="Eliminar Producto"
                                                  process="@this"
-                                                 update=":main:detalleRequisicion" 
+                                                 id="eliminarProducto"
+                                                 update=":main:detalleRequisicion 
+                                                 :main:eliminarProducto" 
+                                                 actionListener="#{mbRequisiciones.eliminar()}"
+                                                 disabled="#{mbRequisiciones.seleccion == null}"
                                                  />
                                 <p:commandButton  icon="ui-icon-search" title="Buscar Productos" 
                                                   process="@this" actionListener="#{mbRequisiciones.mbBuscar.inicializar()}" 
-                                                  update="buscarProductos multipleSelectProductos" oncomplete="buscarProductoDlg.show()"
+                                                  update="buscarProductos multipleSelectProductos" oncomplete="PF('buscarProductoDlg').show();"
                                                   />
                                 <p:separator />
                                 <p:commandButton id="Limpiar"
@@ -106,15 +112,19 @@
                                                  process="@this"
                                                  />
 
-                            </p:toolbarGroup>  
-                        </p:toolbar>  
 
+                            </f:facet>
+                        </p:toolbar>
 
                         <p:dataTable id="detalleRequisicion"
                                      value="#{mbRequisiciones.requisicionDetalles}"
                                      var="det"
                                      rowKey="#{det.producto.idProducto}"
+                                     selectionMode="single"
+                                     selection="#{mbRequisiciones.seleccion}"
                                      >
+                            <p:ajax event="rowSelect" 
+                                    update=":main:eliminarProducto" />
                             <p:column  headerText="Código" style="width: 40px;" >
                                 <h:outputText value="#{det.producto.cod_pro}"  />
                             </p:column>
@@ -132,14 +142,6 @@
                                                 decimalPlaces="2"
                                                 emptyValue="zero">
                                 </pe:inputNumber>
-                            </p:column>
-                            <p:column headerText="Eliminar" style="width: 50px;" >
-                                <p:commandButton icon="ui-icon-trash"
-                                                 title="Eliminar Producto"
-                                                 process="@this"
-                                                 actionListener="#{mbRequisiciones.eliminarProducto(det.producto.idProducto)}" 
-                                                 update=":main:detalleRequisicion" 
-                                                 />
                             </p:column>
                         </p:dataTable>
 
@@ -226,7 +228,7 @@
                             <f:facet name="footer">
                                 <p:commandButton id="seleccionMultiple" value="Seleccionar" 
                                                  actionListener="#{mbRequisiciones.actualizaProductosSeleccionados}"
-                                                 update=":main:detalleRequisicion" oncomplete="buscarProductoDlg.hide()" />
+                                                 update=":main:detalleRequisicion" oncomplete="PF('buscarProductoDlg').hide();" />
                             </f:facet>
                         </p:dataTable>
                     </p:dialog>
@@ -234,7 +236,7 @@
                     <script type="text/javascript">
                     function handleBuscar(xhr, status, args) {
                         if (!(args.validationFailed || !args.okBuscar)) {
-                            buscarProductoDlg.hide();
+                            PF('buscarProductoDlg').hide();
                         }
                     }
                     </script>
