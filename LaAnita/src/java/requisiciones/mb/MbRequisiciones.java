@@ -648,22 +648,28 @@ public class MbRequisiciones implements Serializable {
     }
 
     ///nueva propuesta
-    public void cargaRequisicionesDetalleCotizar(int id, int modi) throws NamingException, SQLException {
-        DAORequisiciones daoReq = new DAORequisiciones();
-        this.setNumCotizacion(0);
-        this.subtotalGeneral = 0;
-        this.sumaDescuentosProductos = 0;
-        this.descuentoGeneralAplicado = 0;
-        this.sumaDescuentoTotales = 0;
-        this.impuesto = 0;
-        this.total = 0;
-        mbMiniProveedor = new MbMiniProveedor();
-        cotizacionDetalles = new ArrayList<CotizacionDetalle>();
-        for (TOCotizacionDetalle rd : daoReq.dameRequisicionDetalleCotizar(id)) {
-            cotizacionDetalles.add(this.convertir(rd));
+    public void cargaRequisicionesDetalleCotizar(int id, int modi) {
+        try {
+            DAORequisiciones daoReq = new DAORequisiciones();
+            this.setNumCotizacion(0);
+            this.subtotalGeneral = 0;
+            this.sumaDescuentosProductos = 0;
+            this.descuentoGeneralAplicado = 0;
+            this.sumaDescuentoTotales = 0;
+            this.impuesto = 0;
+            this.total = 0;
+            mbMiniProveedor = new MbMiniProveedor();
+            cotizacionDetalles = new ArrayList<CotizacionDetalle>();
+            for (TOCotizacionDetalle rd : daoReq.dameRequisicionDetalleCotizar(id)) {
+                cotizacionDetalles.add(this.convertir(rd));
+            }
+            int coti = daoReq.numCotizaciones(id);
+            this.setNumCotizacion(coti);
+        } catch (NamingException ex) {
+            Logger.getLogger(MbRequisiciones.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(MbRequisiciones.class.getName()).log(Level.SEVERE, null, ex);
         }
-        int coti = daoReq.numCotizaciones(id);
-        this.setNumCotizacion(coti);
     }
 
     private CotizacionDetalle convertir(TOCotizacionDetalle to) {
