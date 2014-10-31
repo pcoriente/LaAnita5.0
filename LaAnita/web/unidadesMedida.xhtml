@@ -29,14 +29,14 @@
                                     <p:commandButton icon="ui-icon-document" 
                                                      title="Nueva unidad de medida."
                                                      actionListener="#{mbUnidadMedida.limpiarUnidadMedida()}"
-                                                     oncomplete="dlgUnidadMedida.show();"
+                                                     oncomplete="PF('dlgUnidadMedida').show();"
                                                      update=":main:panelUnidadesMedida"/>
                                     <p:commandButton id="btnActualizarUnidad" 
                                                      icon="ui-icon-pencil" 
                                                      title="Acualizar unidad de medida."
                                                      disabled="#{mbUnidadMedida.unidadMedidaSeleccionada==null}"
                                                      update=":main:panelUnidadesMedida"
-                                                     oncomplete="dlgUnidadMedida.show();"/>
+                                                     oncomplete="PF('dlgUnidadMedida').show();"/>
                                     <p:commandButton icon="ui-icon-arrowreturnthick-1-w" 
                                                      title="Salir"
                                                      process="@this"
@@ -113,13 +113,13 @@
                                >
                             <div align="right" >
                                 <p:commandButton icon="ui-icon-document"
-                                                 oncomplete="dlgMonedas.show();"
+                                                 oncomplete="PF('dlgMonedas').show();"
                                                  actionListener="#{mbMonedas.limpiarMonedas()}"
                                                  update=":main:panelMonedas"/>
                                 <p:commandButton icon="ui-icon-pencil"
                                                  id="btnActualizarMonedas"
                                                  disabled="#{mbMonedas.seleccionMoneda==null}"
-                                                 oncomplete="dlgMonedas.show();"/>
+                                                 oncomplete="PF('dlgMonedas').show();"/>
                                 <p:commandButton icon="ui-icon-arrowreturnthick-1-w" 
                                                  title="Salir"
                                                  process="@this"
@@ -181,7 +181,7 @@
                         <p:tab title="Cedis Zona">
                             <div align="right" >
                                 <p:commandButton icon="ui-icon-document"
-                                                 oncomplete="dlgZonas.show();"/>
+                                                 oncomplete="PF('dlgZonas').show();"/>
                                 <p:commandButton icon="ui-icon-pencil"
                                                  disabled="#{mbCedisZona.seleccionCedisZona==null}"
                                                  id="btnActualizarCedisZona"/>
@@ -236,7 +236,7 @@
                                          update=":main:tabMenu:listaUnidadesMedida 
                                          :main:tabMenu:btnActualizarUnidad"
                                          title="Salir"
-                                         oncomplete="dlgUnidadMedida.hide();"/>
+                                         oncomplete="PF('dlgUnidadMedida').hide();"/>
                     </p:dialog>
 
                     <p:dialog widgetVar="dlgMonedas"
@@ -276,7 +276,7 @@
                                          actionListener="#{mbMonedas.limpiarMonedas()}"
                                          update=":main:tabMenu:tablaMonedas
                                          :main:tabMenu:btnActualizarMonedas"
-                                         oncomplete="dlgMonedas.hide();"/>
+                                         oncomplete=" PF('dlgMonedas').hide();"/>
                     </p:dialog>
 
                     <p:dialog widgetVar="dlgZonas"
@@ -304,28 +304,28 @@
     <script>
         function nuevaUnidadMedida(xhr, status, args) {
             if (args.validationFailed || !args.ok) {
-                dlgUnidadMedida.jq.effect("shake", {times: 5}, 100);
+                PF('dlgUnidadMedida').jq.effect("shake", {times: 5}, 100);
             }
             else {
-                dlgUnidadMedida.hide();
+                PF('dlgUnidadMedida').hide();
             }
         }
         function nuevaMoneda(xhr, status, args) {
             if (args.validationFailed || !args.ok) {
-                dlgMonedas.jq.effect("shake", {times: 5}, 100);
+                PF('dlgMonedas').jq.effect("shake", {times: 5}, 100);
             }
             else {
-                dlgMonedas.hide();
+                PF('dlgMonedas').hide();
             }
         }
 
 
         function nuevaZonaCedis(xhr, status, args) {
             if (args.validationFailed || !args.ok) {
-                dlgZonas.jq.effect("shake", {times: 5}, 100);
+                PF('dlgZonas').jq.effect("shake", {times: 5}, 100);
             }
             else {
-                dlgZonas.hide();
+                PF('dlgZonas').hide();
             }
         }
 

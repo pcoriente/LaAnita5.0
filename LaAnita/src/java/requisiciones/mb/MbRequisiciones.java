@@ -72,6 +72,7 @@ public class MbRequisiciones implements Serializable {
     private double subtotalBruto;
     private String subtotalBrutoF;
     private String navega;
+    private RequisicionDetalle seleccion = null;
 
     //CONSTRUCTOR
     public MbRequisiciones() throws NamingException {
@@ -629,7 +630,7 @@ public class MbRequisiciones implements Serializable {
     public void limpiaCotizacion() throws NamingException {
         //ACTUALIZACION DE CODIGO
         for (CotizacionDetalle d : cotizacionDetalles) {
-        //    d.setCantidadCotizada(0);
+            //    d.setCantidadCotizada(0);
             d.setCostoCotizado(0);
             d.setDescuentoProducto(0);
             d.setDescuentoProducto2(0);
@@ -639,30 +640,36 @@ public class MbRequisiciones implements Serializable {
         this.subtotalGeneral = 0.00;
         this.sumaDescuentosProductos = 0.00;
         this.descuentoGeneralAplicado = 0.00;
-        this.sumaDescuentoTotales =0.00;
-        this.subtotalBruto=0.00;
+        this.sumaDescuentoTotales = 0.00;
+        this.subtotalBruto = 0.00;
         this.impuesto = 0.00;
         this.total = 0.00;
         this.mbMiniProveedor = new MbMiniProveedor();
     }
 
     ///nueva propuesta
-    public void cargaRequisicionesDetalleCotizar(int id, int modi) throws NamingException, SQLException {
-        DAORequisiciones daoReq = new DAORequisiciones();
-        this.setNumCotizacion(0);
-        this.subtotalGeneral = 0;
-        this.sumaDescuentosProductos = 0;
-        this.descuentoGeneralAplicado = 0;
-        this.sumaDescuentoTotales = 0;
-        this.impuesto = 0;
-        this.total = 0;
-        mbMiniProveedor = new MbMiniProveedor();
-        cotizacionDetalles = new ArrayList<CotizacionDetalle>();
-        for (TOCotizacionDetalle rd : daoReq.dameRequisicionDetalleCotizar(id)) {
-            cotizacionDetalles.add(this.convertir(rd));
+    public void cargaRequisicionesDetalleCotizar(int id, int modi) {
+        try {
+            DAORequisiciones daoReq = new DAORequisiciones();
+            this.setNumCotizacion(0);
+            this.subtotalGeneral = 0;
+            this.sumaDescuentosProductos = 0;
+            this.descuentoGeneralAplicado = 0;
+            this.sumaDescuentoTotales = 0;
+            this.impuesto = 0;
+            this.total = 0;
+            mbMiniProveedor = new MbMiniProveedor();
+            cotizacionDetalles = new ArrayList<CotizacionDetalle>();
+            for (TOCotizacionDetalle rd : daoReq.dameRequisicionDetalleCotizar(id)) {
+                cotizacionDetalles.add(this.convertir(rd));
+            }
+            int coti = daoReq.numCotizaciones(id);
+            this.setNumCotizacion(coti);
+        } catch (NamingException ex) {
+            Logger.getLogger(MbRequisiciones.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(MbRequisiciones.class.getName()).log(Level.SEVERE, null, ex);
         }
-        int coti = daoReq.numCotizaciones(id);
-        this.setNumCotizacion(coti);
     }
 
     private CotizacionDetalle convertir(TOCotizacionDetalle to) {
@@ -821,5 +828,18 @@ public class MbRequisiciones implements Serializable {
             msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "Error en la aprobación, verifique su información...");
         }
         FacesContext.getCurrentInstance().addMessage(null, msg);
+    }
+
+    public RequisicionDetalle getSeleccion() {
+        return seleccion;
+    }
+
+    public void setSeleccion(RequisicionDetalle seleccion) {
+        this.seleccion = seleccion;
+    }
+
+    public void eliminar() {
+        requisicionDetalles.remove(seleccion);
+        seleccion = null;
     }
 }

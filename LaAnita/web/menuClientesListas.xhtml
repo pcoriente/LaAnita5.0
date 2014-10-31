@@ -22,14 +22,13 @@
                         <p:commandButton icon="ui-icon-document"
                                          process="@this"
                                          title="Nuevo Formato"
-                                         oncomplete="dlgListasPrecio.show();"
-                                         
+                                         oncomplete="PF('dlgListasPrecio').show();"
                                          />
                         <p:commandButton id="btnEditarFormato" 
                                          icon="ui-icon-pencil"
                                          process="@this"
                                          title="Actualizar Formato"
-                                         oncomplete="dlgFormato.show();"/>
+                                         oncomplete="PF('dlgFormato').show();"/>
                         <p:commandButton icon="ui-icon-arrowreturnthick-1-w"
                                          ajax="false"
                                          title="Salir"
@@ -131,7 +130,7 @@
                                              />
                             <p:commandButton icon="ui-icon-search"
                                              title="Busqueda de Productos"
-                                             oncomplete="buscarProductoDlg.show();"
+                                             oncomplete="PF('buscarProductoDlg').show();"
                                              process="@this"
                                              actionListener="#{mbClientesListas.limpiarBuscador()}"
                                              update=":form:multipleSelectProductos"/>
@@ -262,7 +261,7 @@
 
                             <f:facet name="footer">
                                 <p:commandButton id="seleccionMultiple" value="Seleccionar" 
-                                                 oncomplete="buscarProductoDlg.hide()"
+                                                 oncomplete="PF('buscarProductoDlg').hide();"
                                                  actionListener="#{mbClientesListas.construir()}"
                                                  update=":form:tablaFormatoDetalle"/>
                             </f:facet>
@@ -274,19 +273,19 @@
         </div>
     </body>
     <script>
-        function nuevaListaPrecios(xhr, status, args) {
-            if (args.validationFailed || !args.ok) {
-                dlgListasPrecio.jq.effect("shake", {times: 5}, 100);
-            }
-            else {
-                dlgListasPrecio.hide();
-            }
-        }
-        function handleBuscar(xhr, status, args) {
-            if (!(args.validationFailed || !args.okBuscar)) {
-                buscarProductoDlg.hide();
-            }
-        }
+                            function nuevaListaPrecios(xhr, status, args) {
+                                if (args.validationFailed || !args.ok) {
+                                    PF('dlgListasPrecio').jq.effect("shake", {times: 5}, 100);
+                                }
+                                else {
+                                    PF('dlgListasPrecio').hide();
+                                }
+                            }
+                            function handleBuscar(xhr, status, args) {
+                                if (!(args.validationFailed || !args.okBuscar)) {
+                                    PF('buscarProductoDlg').hide();
+                                }
+                            }
 
     </script>
 </html>

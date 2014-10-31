@@ -87,7 +87,7 @@
                                                  title="Ver Detalle"
                                                  actionListener="#{(mbRequisiciones.requisicionMas(req.idRequisicion))}"
                                                  update=":form:detalle"  
-                                                 oncomplete="reqDialog.show()" 
+                                                 oncomplete="PF('reqDialog').show();" 
 
                                                  />
 
@@ -95,7 +95,7 @@
                                     id="btnAprobar"
                                     icon="ui-icon-pencil"
                                     update=":form:pgCabecero :form:detalleAprobar"
-                                    oncomplete="aprobarDialog.show()"
+                                    oncomplete="PF('aprobarDialog').show();"
                                     title="Procedimiento de aprobación"
                                     actionListener="#{mbRequisiciones.cargaRequisicionesDetalleAprobar(req.idRequisicion)}"
                                     style="margin:0 auto;" 
@@ -155,7 +155,7 @@
 
                     <!-- A P R O B A C I O N... -->
                     <p:dialog header="PROCESO DE APROBACION" widgetVar="aprobarDialog" resizable="false"  
-                              showEffect="fade" hideEffect="explode" modal="true" id="dialogo" width="950" >
+                              showEffect="fade" hideEffect="explode" modal="true" id="dialogo" width="1000" >
                         <h:panelGrid id="pgCabecero" columns="4"  > 
                             <h:outputLabel  value="Empresa :"  style="font-weight: bold; color: red; width: 120px;" />
 
@@ -192,19 +192,42 @@
 
                         </h:panelGrid >
                         <p:messages id="messagesAprobar" showDetail="true"  closable="true" />
-                        <p:dataTable id="detalleAprobar" value="#{mbRequisiciones.requisicionDetalles}" 
+                        <p:toolbar>
+                            <f:facet name="left">
+                                <p:commandButton 
+                                    id="btnRechazarRequimiento"
+                                    icon=" ui-icon-trash"
+                                    value="Eliminar orden de compra."
+                                    title="Rechazar"
+                                    disabled="#{mbRequisiciones.requisicionEncabezado.status eq 2}"
+                                    process="@this"
+                                    actionListener="#{mbRequisiciones.aprobarRequisicion(mbRequisiciones.requisicionEncabezado.idRequisicion, 0)}"
+                                    update=":form:dialogo :form:requisicion :form:detalleAprobar :form:pgCabecero :form:estatus">
+                                    <p:confirm header="Confirmación" 
+                                               message="¿Esta seguro de eliminar la orden de compra?"
+                                               icon="ui-icon-alert" />
+                                </p:commandButton>
+                                <p:confirmDialog global="true" showEffect="fade" hideEffect="explode">
+                                    <p:commandButton value="Yes" type="button" 
+                                                     styleClass="ui-confirmdialog-yes" 
+                                                     icon="ui-icon-check" 
+                                                     />
+                                    <p:commandButton value="No" type="button" 
+                                                     styleClass="ui-confirmdialog-no" 
+                                                     icon="ui-icon-close" />
+                                </p:confirmDialog>
+                            </f:facet>
+                        </p:toolbar>
+                        <p:dataTable id="detalleAprobar" 
+                                     value="#{mbRequisiciones.requisicionDetalles}" 
                                      var="da"
                                      scrollRows="20"  
                                      scrollable="true"
                                      liveScroll="true"
                                      scrollHeight="300"
-                                     style="width: 950px;"
+                                     style="width: 980px;"
                                      rowKey="#{da.producto.idProducto}"
-                                    
                                      >
-                            <p:ajax event="rowEdit" listener="#{mbRequisiciones.onEdit}" update="detalleAprobar" />  
-                            <p:ajax event="rowEditCancel"  update="detalleAprobar" />
-
                             <p:column  headerText="Cod." width="40">
                                 <h:outputText value="#{da.producto.cod_pro}"  />
                             </p:column>
@@ -226,21 +249,10 @@
                                                 style="width: 65px"
                                                 >
                                 </pe:inputNumber>
-                       <!--         <p:cellEditor>  
-                                    <f:facet name="output">  
-                                        <h:outputText   />  
-                                    </f:facet>  
-                                    <f:facet name="input">  
-                                        <p:inputText value="#{da.cantidadAutorizada}" required="true"  requiredMessage="Capture una cantidad númerica y positiva" style="width:100%" label="Autorizada" disabled="#{da.cantidadAutorizada eq 0 || mbRequisiciones.requisicionEncabezado.status eq 2}"/>  
-                                    </f:facet>  
-                                </p:cellEditor>-->
                             </p:column>
                             <p:column headerText="Procesos" style="width: 120px"   >
-                                <p:rowEditor   />
                                 <p:toolbar id="tb" style="width: 80px; margin:0 auto;" >
-
-                                    <p:toolbarGroup style="margin:0 auto;" > 
-
+                                    <f:facet name="right">
                                         <p:commandButton 
                                             id="btnEliminarProducto"
                                             icon="ui-icon-trash"
@@ -262,7 +274,8 @@
                                             style="margin:0 auto;"
                                             disabled="#{da.cantidadAutorizada > 0 }"
                                             />
-                                    </p:toolbarGroup >  
+
+                                    </f:facet>
                                 </p:toolbar>  
                             </p:column>
 
@@ -275,18 +288,12 @@
                                     disabled="#{mbRequisiciones.requisicionEncabezado.status eq 2}"
                                     update=":form:dialogo :form:requisicion :form:detalleAprobar :form:pgCabecero "
                                     process="@this"
-
                                     />
-                                <p:commandButton 
-                                    id="btnRechazarRequimiento"
-                                    icon="ui-icon-closethick"
-                                    title="Rechazar"
-                                    actionListener="#{mbRequisiciones.aprobarRequisicion(mbRequisiciones.requisicionEncabezado.idRequisicion, 0)}"
-                                    disabled="#{mbRequisiciones.requisicionEncabezado.status eq 2}"
-                                    update=":form:dialogo :form:requisicion :form:detalleAprobar :form:pgCabecero :form:estatus "
-                                    process="@this"
+                                <p:commandButton icon=" ui-icon-arrowreturnthick-1-w"
+                                                 title="Salir"
+                                                 onclick="PF('aprobarDialog').hide();"
+                                                 />
 
-                                    />
                             </f:facet>
                         </p:dataTable>
                     </p:dialog>

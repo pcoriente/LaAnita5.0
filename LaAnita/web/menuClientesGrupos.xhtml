@@ -18,7 +18,7 @@
                     <p:growl id="growl" showDetail="true"/>  
                     <div align="right">
                         <p:commandButton icon="ui-icon-document"
-                                         oncomplete="dlgClientesGrupos.show();"
+                                         oncomplete=" PF('dlgClientesGrupos').show();"
                                          actionListener="#{mbMenuClientesGrupos.cargaContactos()}"
                                          process="@this"
                                          update="form :form:txtClienteGrupo :form:txtCodigoGrupo"
@@ -35,7 +35,7 @@
                                          :form:btnContactosNuevo
                                          :form:cmbFormatos"
                                          disabled="#{mbMenuClientesGrupos.clienteGrupoSeleccionado==null}"
-                                         oncomplete="dlgClientesGrupos.show();"
+                                         oncomplete="PF('dlgClientesGrupos').show();"
                                          title="Actualizar Grupo"
                                          />
                         <p:commandButton icon="ui-icon-arrowreturnthick-1-w"
@@ -58,7 +58,7 @@
                             emptyMessage="No hay clientes Grupos"
                             paginator="true"
                             rows="7"
-                           >
+                            >
                             <p:ajax event="rowSelect"
                                     process="@this"
                                     listener="#{mbMenuClientesGrupos.cargarDatos()}"
@@ -77,7 +77,7 @@
                                 <center>
                                     <p:commandButton icon="ui-icon-folder-collapsed" 
                                                      title="Detalle Formato:  #{lstClienteGrupos.grupoCte} "
-                                                     oncomplete="dlgDetalleFormatos.show();"
+                                                     oncomplete=" PF('dlgDetalleFormatos').show();"
                                                      actionListener="#{mbMenuClientesGrupos.dameDetalleFormato(lstClienteGrupos.idGrupoCte)}"
                                                      update=":form:tableFormatoDetalle"/>
                                 </center>
@@ -86,7 +86,7 @@
                                 <center> 
                                     <p:commandButton icon="ui-icon-folder-collapsed" 
                                                      title="Detalle :  #{lstClienteGrupos.grupoCte} "
-                                                     oncomplete="dlgDetalle.show();"
+                                                     oncomplete=" PF('dlgDetalle').show();"
                                                      actionListener="#{mbMenuClientesGrupos.dameDetalle(lstClienteGrupos.idGrupoCte)}"
                                                      update=":form:tableDetalle"
                                                      />
@@ -144,7 +144,7 @@
                                              process="@this txtClienteGrupo cmbContactos"
                                              rendered="#{mbMenuClientesGrupos.actualizar}"
                                              actionListener="#{mbMenuClientesGrupos.limpiarContacto()}"
-                                             oncomplete="dlgContactos.show();"
+                                             oncomplete="PF('dlgContactos').show();"
                                              update=":form:panelContactos "/>
                             <h:outputLabel id="lblTelefonos"
                                            value="Telefonos" style="color: black"
@@ -169,7 +169,7 @@
                                              disabled="#{mbMenuClientesGrupos.mbContactos.contacto.idContacto==0}"
                                              actionListener="#{mbMenuClientesGrupos.cargarTelefonosTipos()}"
                                              update="form:cmbTelefonoTipo :form:mttoTelefonos"
-                                             oncomplete="mttoTelefonosDialog.show();"/>
+                                             oncomplete="PF('mttoTelefonosDialog').show();"/>
 
                             <h:outputLabel id="lblFormatos"
                                            value="Formatos:" style="color: black"
@@ -189,7 +189,7 @@
                                              process="@this"
                                              update=":form:txtFormato"
                                              actionListener="#{mbMenuClientesGrupos.limpiarCamposClientesFormatos()}"
-                                             oncomplete="dlgFormatos.show();"
+                                             oncomplete="PF('dlgFormatos').show();"
                                              />
                         </h:panelGrid>
                         <div style="margin: auto">
@@ -204,7 +204,7 @@
                             <p:commandButton icon="ui-icon-arrowreturnthick-1-w"
                                              process="@this"
                                              actionListener="#{mbMenuClientesGrupos.deseleccionar()}"
-                                             oncomplete="dlgClientesGrupos.hide();"
+                                             oncomplete="PF('dlgClientesGrupos').hide();"
                                              update=":form:tablaClientesGrupos
                                              :form:actualizarContacto"/>
                         </div>
@@ -237,7 +237,7 @@
                                              update=":form:cmbContactos growl"
                                              title="Eliminar"/>
                             <p:commandButton icon="ui-icon-arrowreturnthick-1-w"
-                                             oncomplete="dlgContactos.hide()"
+                                             oncomplete=" PF('dlgContactos').hide();"
                                              title="Cancelar"/>
 
                         </div>
@@ -283,7 +283,7 @@
                                                      process="@this" 
                                                      actionListener="#{mbMenuClientesGrupos.mantenimientoTelefonoTipo()}"
                                                      update=":form:mttoTelefonosTipos"
-                                                     oncomplete="mttoTelefonosTiposDialog.show()" />
+                                                     oncomplete="PF('mttoTelefonosTiposDialog').show();" />
                                 </p:column>
                             </p:row>
                             <p:row >
@@ -328,7 +328,7 @@
                                                          disabled="#{mbMenuClientesGrupos.mbContactos.mbTelefonos.telefono.idTelefono==0}" 
                                                          actionListener="#{mbMenuClientesGrupos.eliminarTelefono()}"
                                                          update="growl :form:cmbTelefonos"
-                                                         oncomplete="mttoTelefonosDialog.hide();"/>
+                                                         oncomplete=" PF('mttoTelefonosDialog').hide();"/>
                                     </p:column>
                                 </p:row>
                             </f:facet>
@@ -447,43 +447,43 @@
         <script>
                     function nuevoClienteGrupo(xhr, status, args) {
                         if (args.validationFailed || !args.ok) {
-                            dlgClientesGrupos.jq.effect("shake", {times: 5}, 100);
+                          PF('dlgClientesGrupos')  .jq.effect("shake", {times: 5}, 100);
                         }
                         else {
-                            dlgClientesGrupos.hide();
+                            PF('dlgClientesGrupos').hide();
                         }
                     }
                     function nuevoContacto(xhr, status, args) {
                         if (args.validationFailed || !args.okContacto) {
-                            dlgContactos.jq.effect("shake", {times: 5}, 100);
+                            PF('dlgContactos').jq.effect("shake", {times: 5}, 100);
                         }
                         else {
-                            dlgContactos.hide();
+                            PF('dlgContactos').hide();
                         }
                     }
 
                     function nuevoTelefono(xhr, status, args) {
                         if (args.validationFailed || !args.okTelefono) {
-                            mttoTelefonosDialog.jq.effect("shake", {times: 5}, 100);
+                            PF('mttoTelefonosDialog').jq.effect("shake", {times: 5}, 100);
                         }
                         else {
-                            mttoTelefonosDialog.hide();
+                            PF('mttoTelefonosDialog').hide();
                         }
                     }
 
                     function handleTelefonoTipo(xhr, status, args) {
                         if (args.validationFailed || !args.okTelefonoTipo) {
-                            mttoTelefonosTiposDialog.jq.effect("shake", {times: 5}, 100);
+                            PF('mttoTelefonosTiposDialog').jq.effect("shake", {times: 5}, 100);
                         } else {
-                            mttoTelefonosTiposDialog.hide();
+                            PF('mttoTelefonosTiposDialog').hide();
                         }
                     }
 
                     function dlgFormato(xhr, status, args) {
                         if (args.validationFailed || !args.ok) {
-                            dlgFormatos.jq.effect("shake", {times: 5}, 100);
+                            PF('dlgFormatos').jq.effect("shake", {times: 5}, 100);
                         } else {
-                            dlgFormatos.hide();
+                            PF('dlgFormatos').hide();
                         }
                     }
 

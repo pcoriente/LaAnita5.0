@@ -20,7 +20,7 @@
                     <div align="right">
                         <p:commandButton icon="ui-icon-document"
                                          title="Nuevo Grupo"
-                                         oncomplete="dlgClientes.show();"
+                                         oncomplete="PF('dlgClientes').show();"
                                          update="form :form:panelClientes 
                                          :form:panelCapturaDireccion
                                          :form:txtRfcCliente"
@@ -30,7 +30,7 @@
                                          icon="ui-icon-pencil"
                                          title="Actualizar Grupo"
                                          process="@this"
-                                         oncomplete="dlgClientes.show();"
+                                         oncomplete="PF('dlgClientes').show();"
                                          update="form :form:panelClientes 
                                          :form:panelCapturaDireccion
                                          :form:txtRfcCliente"
@@ -119,7 +119,7 @@
                                              cols="22"
                                              disabled="true"/> 
                             <p:commandButton icon="ui-icon-plus" 
-                                             oncomplete="dlgDireccion.show();"
+                                             oncomplete="PF('dlgDireccion').show();"
                                              title="Nueva Direccion"
                                              actionListener="#{mbClientesBueno.altaDireccionClientes()}"
                                              update=":form:panelCapturaDireccion"
@@ -215,7 +215,7 @@
                             </p:selectOneMenu>
                             <p:commandButton icon="ui-icon-plus"
                                              rendered="#{mbClientesBueno.actualizar}"
-                                             oncomplete="dlgCuentasBancos.show();"
+                                             oncomplete="PF('dlgCuentasBancos').show();"
                                              process="@this cmbBancos"
                                              update=":form:panelCuentasBancos"
                                              actionListener="#{mbClientesBueno.dameInformacion()}"
@@ -234,7 +234,7 @@
                             />
                         <p:commandButton 
                             actionListener="#{mbClientesBueno.cancelar()}"
-                            oncomplete="dlgClientes.hide();"
+                            oncomplete=" PF('dlgClientes').hide();"
                             process="@this :form:cmbBancos"
                             title="Cancelar"
                             icon="ui-icon-arrowreturnthick-1-w"
@@ -278,7 +278,7 @@
                                              cols="22"
                                              disabled="true"/> 
                             <p:commandButton icon="ui-icon-plus" 
-                                             oncomplete="dlgDireccion.show();"
+                                             oncomplete="PF('dlgDireccion').show();"
                                              title="Nueva Direccion"
                                              process="@this"
                                              update=":form:panelCapturaDireccion"
@@ -294,7 +294,7 @@
                                              icon="ui-icon-disk"/>
                             <p:commandButton title="Salir" 
                                              icon="ui-icon-arrowreturnthick-1-w"
-                                             oncomplete="dlgContribuyentes.hide();"/>
+                                             oncomplete=" PF('dlgContribuyentes').hide();"/>
                         </div>
                     </p:dialog>
                     <p:dialog  header="Nueva Dirección" 
@@ -374,7 +374,7 @@
                                                  title="Cancelar Direccion"
                                                  actionListener="#{mbAgentes.mbDireccion.cancelarDireccion()}"
                                                  process="@this"
-                                                 oncomplete="dlgDireccion.hide();"/>
+                                                 oncomplete="PF('dlgDireccion').hide();"/>
                             </h:panelGroup>
                         </h:panelGrid>
                     </p:dialog>
@@ -404,7 +404,7 @@
                                              actionListener="#{mbClientesBueno.guardarCuentasBancarias()}"
                                              update="growl :form:cmbBancos"
                                              oncomplete="nuevaCuentaBancaria(xhr, status, args);"/>
-                            <p:commandButton oncomplete="dlgCuentasBancos.hide();"
+                            <p:commandButton oncomplete="PF('dlgCuentasBancos').hide();"
                                              title="Cancelar"
                                              icon="ui-icon-arrowreturnthick-1-w"/>
                         </div>
@@ -412,43 +412,45 @@
                 </h:form>
                 <script>
                     function nuevaDireccion(xhr, status, args) {
-                            if (args.validationFailed || !args.okContribuyente) {
-                            dlgDireccion.jq.effect("shake", {times: 5}, 100);
+                        if (args.validationFailed || !args.okContribuyente) {
+                            PF('dlgDireccion').jq.effect("shake", {times: 5}, 100);
                         }
                         else {
-                    dlgDireccion.hide();
-                        }
-                        }
-                            function nuevoCliente(xhr, status, args) {
-                        if (args.validationFailed || !args.ok) {
-                            dlgClientes.jq.effect("shake", {times: 5}, 100);
-                        }
-                        else {
-                    dlgClientes.hide();
+                            PF('dlgDireccion').hide();
                         }
                     }
-                            function nuevaCuentaBancaria(xhr, status, args) {
+                    function nuevoCliente(xhr, status, args) {
                         if (args.validationFailed || !args.ok) {
-                            dlgCuentasBancos.jq.effect("shake", {times: 5}, 100);
+                            PF('dlgClientes').jq.effect("shake", {times: 5}, 100);
                         }
                         else {
-                    dlgCuentasBancos.hide();
+                            PF('dlgClientes').hide();
                         }
                     }
-                            function nuevoContribuyente(xhr, status, args) {
+                    function nuevaCuentaBancaria(xhr, status, args) {
                         if (args.validationFailed || !args.ok) {
-                            dlgContribuyentes.jq.effect("shake", {times: 5}, 100);
+                            PF('dlgCuentasBancos').jq.effect("shake", {times: 5}, 100);
                         }
                         else {
-                    dlgContribuyentes.hide();
+                            PF('dlgCuentasBancos').hide();
                         }
-                        }
+                    }
+                    function nuevoContribuyente(xhr, status, args) {
+                        if (args.validationFailed || !args.ok) {
 
-                        function validarRfc(xhr, status, args) {
-                            if (args.validationFailed || !args.ok) {
+                            PF('dlgContribuyentes').jq.effect("shake", {times: 5}, 100);
                         }
                         else {
-                    dlgContribuyentes.show();
+                            PF('dlgContribuyentes').hide();
+                        }
+                    }
+
+                    function validarRfc(xhr, status, args) {
+                        if (args.validationFailed || !args.ok) {
+                        }
+                        else {
+                            PF('dlgContribuyentes').show();
+
                         }
                     }
                 </script>

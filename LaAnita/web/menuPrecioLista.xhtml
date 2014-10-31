@@ -20,7 +20,7 @@
                     <div align="right">
                         <p:commandButton icon="ui-icon-document"
                                          title="Nuevo Formato"
-                                         oncomplete="dlgPrecioIdeal.show();"
+                                         oncomplete="PF('dlgPrecioIdeal').show();"
                                          update=":form:btnBUscarProducto 
                                          :form:tablePrecioIdeal"
                                          actionListener="#{mbListaPrecioIdeal.cancelar()}"
@@ -91,7 +91,7 @@
                             <p:commandButton icon="ui-icon-search"
                                              title="Buscar producto"
                                              process="@this"
-                                             oncomplete="buscarProductoDlg.show();"
+                                             oncomplete="PF('buscarProductoDlg').show();"
                                              id="btnBUscarProducto"
                                              disabled="#{mbListaPrecioIdeal.actualizar==true}"
                                              />
@@ -141,7 +141,7 @@
                                          :form:btnBUscarProducto
                                          :form:tableProductos
                                          :form:btnEliminarProducto"
-                                         oncomplete="dlgPrecioIdeal.hide();"/>
+                                         oncomplete="PF('dlgPrecioIdeal').hide();"/>
                     </p:dialog>
                     <p:dialog header="BUSCADOR DE PRODUCTOS" 
                               widgetVar="buscarProductoDlg" 
@@ -230,7 +230,7 @@
 
                             <f:facet name="footer">
                                 <p:commandButton id="seleccionMultiple" value="Seleccionar" 
-                                                 oncomplete="buscarProductoDlg.hide()"
+                                                 oncomplete="PF('buscarProductoDlg').hide()"
                                                  actionListener="#{mbListaPrecioIdeal.construir()}"
                                                  update=":form:tableProductos"
                                                  />
@@ -246,16 +246,16 @@
     <script>
         function nuevaListaPrecioIdeal(xhr, status, args) {
             if (args.validationFailed || !args.ok) {
-                dlgPrecioIdeal.jq.effect("shake", {times: 5}, 100);
+                PF('dlgPrecioIdeal').jq.effect("shake", {times: 5}, 100);
             }
             else {
-                dlgPrecioIdeal.hide();
+                PF('dlgPrecioIdeal').hide();
             }
         }
 
         function handleBuscar(xhr, status, args) {
             if (!(args.validationFaild || !args.okBuscar)) {
-                buscarProductoDlg.hide();
+                PF('buscarProductoDlg').hide();
             }
         }
 

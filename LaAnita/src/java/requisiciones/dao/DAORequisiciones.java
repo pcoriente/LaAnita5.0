@@ -486,10 +486,8 @@ public class DAORequisiciones {
         ResultSet rs;
         Connection cn = ds.getConnection();
         try {
-
             String stringSQL = "select  count(numCotizaciones) as numCotiza\n"
                     + " from cotizaciones where idRequisicion=" + idReq;
-
             Statement sentencia = cn.createStatement();
             rs = sentencia.executeQuery(stringSQL);
             while (rs.next()) {
