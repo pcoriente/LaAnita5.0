@@ -24,8 +24,7 @@
                         <p:messages id="messages" showDetail="true"  closable="true" />
                         <label style="color:blueviolet" >COTIZACION DE PRODUCTOS</label>
                         <p:toolbar  id="tb" style="width: 845px; height: auto; margin:0 auto; " >  
-                            <p:toolbarGroup align="right">  
-
+                            <f:facet name="right">
 
                                 <p:commandButton
                                     icon="ui-icon-disk"
@@ -59,18 +58,16 @@
                                     />
 
                                 <p:commandButton id="salirCotizacion"
-                                                 icon="ui-icon-home"
+                                                 icon="ui-icon-arrowreturnthick-1-w"
                                                  title="Ir a Menú Cotizaciones"
                                                  action="#{mbRequisiciones.salirMenu(2)}"
                                                  update=":fc:detalleCotizacion  cabeceroCotizacion"
                                                  />
-                            </p:toolbarGroup>  
+                            </f:facet>  
                         </p:toolbar>  
-                        <h:panelGrid columns="4">
-                            <p:column width="25"  >
-                                <h:outputLabel  value="Proveedor :"  styleClass="textoEtiquetas" />
-                            </p:column >
-                            <p:column  >
+                        <center>
+                            <h:panelGrid  columns="2" >
+
                                 <p:selectOneMenu id="proveedor"
                                                  value="#{mbRequisiciones.mbMiniProveedor.miniProveedor}"  filter="true"  >
                                     <f:converter converterId="converters.miniProveedor" />
@@ -80,18 +77,14 @@
                                             update="cabeceroCotizacion :fc:detalleCotizacion moneda desctoComercial dc desctoProntoPago dpp "/>
 
                                 </p:selectOneMenu>
-                            </p:column>
-                            <p:column width="10"  >
-                                <h:outputLabel  value="Moneda :"  styleClass="textoEtiquetas" />
-                            </p:column >
-                            <p:column  >
-                                <p:selectOneMenu id="moneda" value="#{mbRequisiciones.mbMonedas.moneda}">
+
+                                <p:selectOneMenu id="moneda" value="#{mbRequisiciones.mbMonedas.moneda}" style="width: 250px;" >
                                     <f:converter converterId="converters.Moneda" />
                                     <f:selectItems value="#{mbRequisiciones.mbMonedas.listaMonedas}"   />
                                     <p:ajax event="change" />
                                 </p:selectOneMenu>
-                            </p:column>
-                        </h:panelGrid>
+                            </h:panelGrid>
+                        </center>
                         <h:panelGrid id="cabeceroCotizacion" columns="12" width="800"  > 
 
 
@@ -107,7 +100,7 @@
                                         <p:ajax event="blur" 
                                                 listener="#{mbRequisiciones.calculoDescuentoGeneral()}"
                                                 update=":fc:detalleCotizacion desctoComercial dc :fc:sumaDescuentosTotales
-                                                        :fc:sumaDescuentosProductos :fc:descuentoGeneralAplicado"
+                                                :fc:sumaDescuentosProductos :fc:descuentoGeneralAplicado"
                                                 process="@this"/>
                                     </pe:inputNumber> 
                                 </p:inplace>
@@ -123,7 +116,7 @@
                                         <p:ajax event="blur" 
                                                 listener="#{mbRequisiciones.calculoDescuentoGeneral()}"
                                                 update=":fc:detalleCotizacion desctoProntoPago dpp :fc:sumaDescuentosTotales
-                                                        :fc:sumaDescuentosProductos :fc:descuentoGeneralAplicado"
+                                                :fc:sumaDescuentosProductos :fc:descuentoGeneralAplicado"
                                                 process="@this"/>
                                     </pe:inputNumber> 
                                 </p:inplace>
@@ -148,12 +141,10 @@
 
 
                         <p:dataTable id="detalleCotizacion" value="#{mbRequisiciones.cotizacionDetalles}" 
-                                     var="cot" scrollable="true" scrollHeight="200" style="width: 900px; margin:0 auto; font-size: 12px;" styleClass="sinBorde"
-                                     rowKey="#{cot.producto.idProducto}" rowIndexVar="fila"
+                                     var="cot"  style="width: 900px; margin:0 auto; font-size: 12px;" styleClass="sinBorde"
+                                     rowKey="#{cot.producto.idProducto}" rowIndexVar="fila" scrollable="true" scrollHeight="200"
                                      >
-                            <p:column  headerText="Num." width="20" >
-                                <h:outputText value="#{fila+1}" />
-                            </p:column>
+
                             <p:column  headerText="Cod." width="45" >
                                 <h:outputText value="#{cot.producto.cod_pro}" />
                             </p:column>
@@ -233,7 +224,7 @@
                         </p:dataTable>
                         <p:panelGrid id="pie" >
                             <p:row >
-                                <p:column style="font-weight: bold; color: red; text-align: right; width: 800px" colspan="5" >Importe :</p:column>
+                                <p:column style="font-weight: bold; color: red; text-align: right; width: 900px" colspan="5" >Importe :</p:column>
                                 <p:column styleClass="alineacionD" style="font-weight: bold; width: 80px;" >
                                     <h:outputText value="#{mbRequisiciones.subtotalGeneral}" id="importe" style="color: black;" >
                                         <f:convertNumber type="currency" locale="en-US"   />
@@ -269,7 +260,7 @@
                                 <p:column style="font-weight: bold; color: red; text-align: right; width: 800px" colspan="5" >Subtotal :</p:column>
                                 <p:column styleClass="alineacionD" style="font-weight: bold; width: 80px;" >
                                     <h:outputText value=" #{mbRequisiciones.subtotalBrutoF}"  id="subtotalBruto" style="color: black;" >
-                                          
+
                                     </h:outputText>
                                 </p:column>
                             </p:row>
