@@ -223,7 +223,7 @@ public class DAOComprobantes {
         try {
             String strSQL="SELECT * FROM comprobantes " +
                             "WHERE idAlmacen="+idAlmacen+" AND idProveedor="+idProveedor+" AND tipoComprobante="+tipoComprobante+ " " +
-                            "ORDER BY FECHA DESC";
+                            "ORDER BY fecha DESC";
             ResultSet rs=st.executeQuery(strSQL);
             while(rs.next()) {
                 comprobantes.add(construir(rs));

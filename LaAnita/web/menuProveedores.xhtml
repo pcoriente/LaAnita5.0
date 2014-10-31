@@ -43,7 +43,7 @@
                                      style="border:solid 1px"
                                      widgetVar="proveedorTable" 
                                      emptyMessage="No hay elementos que desplegar">
-                            <p:column filterBy="#{proveedor.contribuyente.rfc}" filterMatchMode="contains" >
+                            <p:column filterBy="#{proveedor.contribuyente.rfc}" filterMatchMode="contains" style="width: 120px;" >
                                 <f:facet name="header" >
                                     <h:outputText value="RFC" />
                                 </f:facet>
@@ -55,13 +55,13 @@
                                 </f:facet>
                                 <h:outputText value="#{proveedor.toString()}"/>
                             </p:column>
-                            <p:column >
+                            <p:column style="width: 150px;" >
                                 <f:facet name="header" >
                                     <h:outputText value="Clasificacion" />
                                 </f:facet>
-                                <h:outputText value="#{proveedor.clasificacion.toString()}"/>
+                                <h:outputText value="#{proveedor.clasificacion.toString()}" />
                             </p:column>
-                            <p:column headerText="Más" colspan="">
+                            <p:column headerText="Más" style="width: 30px; text-align: center;">
                                 <p:rowToggler  />
                             </p:column>
                             <p:rowExpansion  >
@@ -84,7 +84,7 @@
                                     </p:tab>
                                 </p:accordionPanel>
                             </p:rowExpansion>
-                            <p:column  headerText="Procesos"  style="width: 5px">
+                            <p:column  headerText="Accion"  style="width: 40px; text-align: center;">
                                 <h:commandLink id="lnkModificarProveedor" action="#{mbProveedores.mantenimiento(proveedor.idProveedor)}" 
                                                disabled="#{not mbProveedores.mbAcciones.validarAccion('lnkModificarProveedor')}" >
                                     <h:graphicImage library="images" name="build.png"  /> 

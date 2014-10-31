@@ -37,7 +37,8 @@ public class MbProductosBuscar implements Serializable {
     private String strBuscar;
     private Producto producto;
     private ArrayList<Producto> productos;
-    private Producto[] seleccionados;
+//    private Producto[] seleccionados;
+    private ArrayList<Producto> seleccionados;
     private DAOProductosBuscar dao;
     private DAOSubProductos daoSubProductos;
 
@@ -62,7 +63,8 @@ public class MbProductosBuscar implements Serializable {
         this.tipoBuscar = "2";
         this.producto = null;
         this.productos = new ArrayList<Producto>();
-        this.seleccionados = new Producto[]{};
+//        this.seleccionados = new Producto[]{};
+        this.seleccionados=new ArrayList<Producto>();
     }
 
     public void limpiarBuscador() {
@@ -243,11 +245,18 @@ public class MbProductosBuscar implements Serializable {
         this.mbGrupo = mbGrupo;
     }
 
-    public Producto[] getSeleccionados() {
+    //    public Producto[] getSeleccionados() {
+    //        return seleccionados;
+    //    }
+    //
+    //    public void setSeleccionados(Producto[] seleccionados) {
+    //        this.seleccionados = seleccionados;
+    //    }
+    public ArrayList<Producto> getSeleccionados() {
         return seleccionados;
     }
 
-    public void setSeleccionados(Producto[] seleccionados) {
+    public void setSeleccionados(ArrayList<Producto> seleccionados) {
         this.seleccionados = seleccionados;
     }
 

@@ -3,7 +3,6 @@ package impuestos.dao;
 import impuestos.dominio.Impuesto;
 import impuestos.dominio.ImpuestoGrupo;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -38,16 +37,54 @@ public class DAOGrupos {
         }
     }
     
-    public ArrayList<Impuesto> eliminarImpuesto(int idGrupo, int idImpuesto) throws SQLException {
-        ArrayList<Impuesto> impuestos=new ArrayList<Impuesto>();
+    public void eliminarImpuesto(int idImpuesto) throws SQLException {
         Connection cn = this.ds.getConnection();
         Statement st = cn.createStatement();
         try {
             st.executeUpdate("begin Transaction");
-            st.executeUpdate("DELETE FROM impuestosGruposDetalle WHERE idGrupo="+idGrupo+" AND idImpuesto="+idImpuesto);
-            ResultSet rs=st.executeQuery(sqlAgregados(idGrupo));
-            while(rs.next()) {
-                impuestos.add(new Impuesto(rs.getInt("idImpuesto"),rs.getString("impuesto"), rs.getBoolean("aplicable"), rs.getInt("modo"), rs.getBoolean("acreditable"), rs.getBoolean("acumulable")));
+            int total=0;
+            ResultSet rs=st.executeQuery("SELECT COUNT(*) AS total FROM impuestosGruposDetalle WHERE idImpuesto="+idImpuesto);
+            if(rs.next()) {
+                total=rs.getInt("total");
+            }
+            if(total==0) {
+                st.executeUpdate("DELETE FROM impuestos WHERE idImpuesto="+idImpuesto);
+            } else {
+                throw new SQLException("El impuesto no puede ser eliminado pues esta en uso !!!");
+            }
+            st.executeUpdate("commit Transaction");
+        } catch(SQLException e) {
+            st.executeUpdate("rollback Transaction");
+            throw e;
+        } finally {
+            cn.close();
+        }
+    }
+    
+    public void modificarImpuesto(Impuesto impuesto) throws SQLException {
+        Connection cn = this.ds.getConnection();
+        Statement st = cn.createStatement();
+        try {
+            st.executeUpdate("UPDATE impuestos "
+                    + "SET impuesto='"+impuesto.getImpuesto()+"', aplicable="+(impuesto.isAplicable()?1:0)+", "
+                    + "     modo="+impuesto.getModo()+", acreditable="+(impuesto.isAcreditable()?1:0)+", acumulable="+(impuesto.isAcumulable()?1:0)+" "
+                    + "WHERE idImpuesto="+impuesto.getIdImpuesto());
+        } finally {
+            cn.close();
+        }
+    }
+    
+    public int agregarImpuesto(Impuesto impuesto) throws SQLException {
+        int idImpuesto = 0;
+        Connection cn = this.ds.getConnection();
+        Statement st = cn.createStatement();
+        try {
+            st.executeUpdate("begin Transaction");
+            st.executeUpdate("INSERT INTO impuestos (impuesto, aplicable, modo, acreditable, acumulable) "
+                    + "VALUES ('" + impuesto.getImpuesto() + "', "+(impuesto.isAplicable()?1:0)+", "+impuesto.getModo()+", "+(impuesto.isAcreditable()?1:0)+", "+(impuesto.isAcumulable()?1:0)+")");
+            ResultSet rs=st.executeQuery("SELECT MAX(idImpuesto) as idImpuesto FROM impuestos");
+            if(rs.next()) {
+                idImpuesto=rs.getInt("idImpuesto");
             }
             st.executeUpdate("commit Transaction");
         } catch (SQLException ex) {
@@ -56,44 +93,86 @@ public class DAOGrupos {
         } finally {
             cn.close();
         }
-        return impuestos;
+        return idImpuesto;
     }
     
-    private String sqlAgregados(int idGrupo) {
-        String strSQL="SELECT i.* "
-                    + "FROM impuestosGruposDetalle gd "
-                    + "INNER JOIN impuestos i ON i.idImpuesto=gd.idImpuesto "
-                    + "WHERE gd.idGrupo="+idGrupo;
-        return strSQL;
-    }
-    
-    public ArrayList<Impuesto> agregarImpuesto(int idGrupo, int idImpuesto) throws SQLException {
-        ArrayList<Impuesto> impuestos=new ArrayList<Impuesto>();
-        Connection cn = this.ds.getConnection();
+    public ArrayList<Impuesto> obtenerImpuestos() throws SQLException {
+        ArrayList<Impuesto> impuestos = new ArrayList<Impuesto>();
+        String strSQL = "SELECT * FROM impuestos ORDER BY impuesto";
+        Connection cn = ds.getConnection();
         Statement st = cn.createStatement();
         try {
-            st.executeUpdate("begin Transaction");
-            st.executeUpdate("INSERT INTO impuestosGruposDetalle (idGrupo, idImpuesto) VALUES ("+idGrupo+", "+idImpuesto+")");
-            ResultSet rs=st.executeQuery(sqlAgregados(idGrupo));
-            while(rs.next()) {
-                impuestos.add(new Impuesto(rs.getInt("idImpuesto"),rs.getString("impuesto"), rs.getBoolean("aplicable"), rs.getInt("modo"), rs.getBoolean("acreditable"), rs.getBoolean("acumulable")));
+            ResultSet rs = st.executeQuery(strSQL);
+            while (rs.next()) {
+                impuestos.add(new Impuesto(rs.getInt("idImpuesto"), rs.getString("impuesto"), rs.getBoolean("aplicable"), rs.getInt("modo"), rs.getBoolean("acreditable"), rs.getBoolean("acumulable")));
             }
-            st.executeUpdate("commit Transaction");
-        } catch (SQLException ex) {
-            st.executeUpdate("rollback Transaction");
-            throw (ex);
         } finally {
             cn.close();
         }
         return impuestos;
     }
+    
+//    public ArrayList<Impuesto> eliminarImpuesto(int idGrupo, int idImpuesto) throws SQLException {
+//        ArrayList<Impuesto> impuestos=new ArrayList<Impuesto>();
+//        Connection cn = this.ds.getConnection();
+//        Statement st = cn.createStatement();
+//        try {
+//            st.executeUpdate("begin Transaction");
+//            st.executeUpdate("DELETE FROM impuestosGruposDetalle WHERE idGrupo="+idGrupo+" AND idImpuesto="+idImpuesto);
+//            ResultSet rs=st.executeQuery(sqlAgregados(idGrupo));
+//            while(rs.next()) {
+//                impuestos.add(new Impuesto(rs.getInt("idImpuesto"),rs.getString("impuesto"), rs.getBoolean("aplicable"), rs.getInt("modo"), rs.getBoolean("acreditable"), rs.getBoolean("acumulable")));
+//            }
+//            st.executeUpdate("commit Transaction");
+//        } catch (SQLException ex) {
+//            st.executeUpdate("rollback Transaction");
+//            throw (ex);
+//        } finally {
+//            cn.close();
+//        }
+//        return impuestos;
+//    }
+    
+//    private String sqlAgregados(int idGrupo) {
+//        String strSQL="SELECT i.* "
+//                    + "FROM impuestosGruposDetalle gd "
+//                    + "INNER JOIN impuestos i ON i.idImpuesto=gd.idImpuesto "
+//                    + "WHERE gd.idGrupo="+idGrupo;
+//        return strSQL;
+//    }
+    
+//    public ArrayList<Impuesto> agregarImpuesto(int idGrupo, int idImpuesto) throws SQLException {
+//        ArrayList<Impuesto> impuestos=new ArrayList<Impuesto>();
+//        Connection cn = this.ds.getConnection();
+//        Statement st = cn.createStatement();
+//        try {
+//            st.executeUpdate("begin Transaction");
+//            st.executeUpdate("INSERT INTO impuestosGruposDetalle (idGrupo, idImpuesto) VALUES ("+idGrupo+", "+idImpuesto+")");
+//            ResultSet rs=st.executeQuery(sqlAgregados(idGrupo));
+//            while(rs.next()) {
+//                impuestos.add(new Impuesto(rs.getInt("idImpuesto"),rs.getString("impuesto"), rs.getBoolean("aplicable"), rs.getInt("modo"), rs.getBoolean("acreditable"), rs.getBoolean("acumulable")));
+//            }
+//            st.executeUpdate("commit Transaction");
+//        } catch (SQLException ex) {
+//            st.executeUpdate("rollback Transaction");
+//            throw (ex);
+//        } finally {
+//            cn.close();
+//        }
+//        return impuestos;
+//    }
     
     public ArrayList<Impuesto> obtenerImpuestosAgregados(int idGrupo) throws SQLException {
         ArrayList<Impuesto> impuestos=new ArrayList<Impuesto>();
         Connection cn = this.ds.getConnection();
         Statement st = cn.createStatement();
         try {
-            ResultSet rs=st.executeQuery(sqlAgregados(idGrupo));
+//            ResultSet rs=st.executeQuery(sqlAgregados(idGrupo));
+            String strSQL="SELECT i.* "
+                    + "FROM impuestosGruposDetalle gd "
+                    + "INNER JOIN impuestos i ON i.idImpuesto=gd.idImpuesto "
+                    + "WHERE gd.idGrupo="+idGrupo;
+            ResultSet rs=st.executeQuery(strSQL);
             while(rs.next()) {
                 impuestos.add(new Impuesto(rs.getInt("idImpuesto"),rs.getString("impuesto"), rs.getBoolean("aplicable"), rs.getInt("modo"), rs.getBoolean("acreditable"), rs.getBoolean("acumulable")));
             }
@@ -119,38 +198,28 @@ public class DAOGrupos {
         return impuestos;
     }
     
-    public void modificarDetalle(int idGrupo, ArrayList<Impuesto> impuestos) throws SQLException {
-        Connection cn = this.ds.getConnection();
-        Statement st = cn.createStatement();
-        PreparedStatement pSt = cn.prepareStatement("INSERT INTO impuestosGruposDetalle (idGrupo, idImpuesto) VALUES (?, ?)");
-        try {
-            st.executeUpdate("begin Transaction");
-            st.executeUpdate("DELETE FROM impuestosGruposDetalle WHERE idGrupo="+idGrupo);
-            for(Impuesto i: impuestos) {
-                pSt.setInt(idGrupo, 1);
-                pSt.setInt(i.getIdImpuesto(), 2);
-                pSt.executeUpdate();
-            }
-            st.executeUpdate("commit Transaction");
-        } catch (SQLException ex) {
-            st.executeUpdate("rollback Transaction");
-            throw (ex);
-        } finally {
-            cn.close();
-        }
-    }
+//    public void modificarDetalle(int idGrupo, ArrayList<Impuesto> impuestos) throws SQLException {
+//        Connection cn = this.ds.getConnection();
+//        Statement st = cn.createStatement();
+//        PreparedStatement pSt = cn.prepareStatement("INSERT INTO impuestosGruposDetalle (idGrupo, idImpuesto) VALUES (?, ?)");
+//        try {
+//            st.executeUpdate("begin Transaction");
+//            st.executeUpdate("DELETE FROM impuestosGruposDetalle WHERE idGrupo="+idGrupo);
+//            for(Impuesto i: impuestos) {
+//                pSt.setInt(idGrupo, 1);
+//                pSt.setInt(i.getIdImpuesto(), 2);
+//                pSt.executeUpdate();
+//            }
+//            st.executeUpdate("commit Transaction");
+//        } catch (SQLException ex) {
+//            st.executeUpdate("rollback Transaction");
+//            throw (ex);
+//        } finally {
+//            cn.close();
+//        }
+//    }
     
-    public void modificar(ImpuestoGrupo grupo) throws SQLException {
-        Connection cn = this.ds.getConnection();
-        Statement st = cn.createStatement();
-        try {
-            st.executeUpdate("UPDATE impuestosGrupos SET grupo='"+grupo.getGrupo()+"' WHERE idGrupo="+grupo.getIdGrupo());
-        } finally {
-            cn.close();
-        }
-    }
-    
-    public boolean eliminar(int idGrupo) throws SQLException {
+    public boolean eliminarGrupo(int idGrupo) throws SQLException {
         boolean ok=false;
         Connection cn = this.ds.getConnection();
         Statement st = cn.createStatement();
@@ -172,7 +241,25 @@ public class DAOGrupos {
         return ok;
     }
     
-    public int agregar(ImpuestoGrupo grupo) throws SQLException {
+    public void modificarGrupo(ImpuestoGrupo grupo, ArrayList<Impuesto> agregados) throws SQLException {
+        Connection cn = this.ds.getConnection();
+        Statement st = cn.createStatement();
+        try {
+            st.executeUpdate("begin Transaction");
+            st.executeUpdate("UPDATE impuestosGrupos SET grupo='"+grupo.getGrupo()+"' WHERE idGrupo="+grupo.getIdGrupo());
+            st.executeUpdate("DELETE FROM impuestosGruposDetalle WHERE idGrupo="+grupo.getIdGrupo());
+            for(Impuesto i: agregados) {
+                st.executeUpdate("INSERT INTO impuestosGruposDetalle (idGrupo, idImpuesto) VALUES ("+grupo.getIdGrupo()+", "+i.getIdImpuesto()+")");
+            }
+            st.executeUpdate("commit Transaction");
+        } catch(SQLException e) {
+            st.executeUpdate("rollback Transaction");
+        } finally {
+            cn.close();
+        }
+    }
+    
+    public int agregarGrupo(ImpuestoGrupo grupo, ArrayList<Impuesto> agregados) throws SQLException {
         int idGrupo=0;
         Connection cn = this.ds.getConnection();
         Statement st = cn.createStatement();
@@ -182,6 +269,9 @@ public class DAOGrupos {
             ResultSet rs=st.executeQuery("SELECT MAX(idGrupo) AS idGrupo FROM impuestosGrupos");
             if(rs.next()) {
                 idGrupo=rs.getInt("idGrupo");
+            }
+            for(Impuesto i: agregados) {
+                st.executeUpdate("INSERT INTO impuestosGruposDetalle (idGrupo, idImpuesto) VALUES ("+idGrupo+", "+i.getIdImpuesto()+")");
             }
             st.executeUpdate("commit Transaction");
         } catch (SQLException ex) {

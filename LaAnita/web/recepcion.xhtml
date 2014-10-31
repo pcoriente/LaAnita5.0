@@ -34,7 +34,7 @@
                                 <p:column >
                                     <p:commandButton id="btnBuscarRecepciones" icon="ui-icon-search" title="Buscar Recepciones" 
                                                      process="@this" actionListener="#{mbRecepcion.obtenerRecepciones()}" 
-                                                     update=":main:msgs listaRecepciones" oncomplete="listaRecepcionesDlg.show();" />
+                                                     update=":main:msgs listaRecepciones" oncomplete="PF('listaRecepcionesDlg').show();" />
                                 </p:column>
                             </p:row>
                             <p:row >
@@ -76,7 +76,7 @@
                                                      process="@this" actionListener="#{mbRecepcion.salir()}" update="main" />
                                     <p:commandButton id="btnEditarLotes" icon="ui-icon-document" title="Editar lotes recibidos" 
                                                      process="@this" actionListener="#{mbRecepcion.editarLotes()}" update="listaLotes" 
-                                                     oncomplete="editarLotesDlg.show();" />
+                                                     oncomplete="PF('editarLotesDlg').show();" />
                                 </p:column>
                             </p:row>
                         </p:panelGrid>
@@ -147,7 +147,7 @@
                                      var="recepcion" rowKey="#{recepcion.idMovto}" selectionMode="single" 
                                      emptyMessage="No hay elementos que desplegar" scrollable="true" scrollHeight="220" >
                             <p:ajax process="@this" event="rowSelect" listener="#{mbRecepcion.cargaDetalleRecepcion}" 
-                                    update=":main" oncomplete="listaRecepcionesDlg.hide();" />
+                                    update=":main" oncomplete="PF('listaRecepcionesDlg').hide();" />
                             <p:column headerText="CEDIS" >
                                 <h:outputText value="#{recepcion.comprobante.almacen.cedis.cedis}" />
                             </p:column>

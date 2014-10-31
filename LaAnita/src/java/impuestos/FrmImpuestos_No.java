@@ -64,7 +64,7 @@ public class FrmImpuestos_No implements Serializable {
     }
     
     public void eliminarGrupo() {
-        if (this.mbGrupos.eliminar()) {
+        if (this.mbGrupos.eliminarGrupo()) {
             this.grupo=this.mbGrupos.getGrupo();
             this.cambiarGrupo();
         }
@@ -121,7 +121,7 @@ public class FrmImpuestos_No implements Serializable {
     }
 
     public void cambiarPeriodo() {
-        this.mbDetalle.cambiaPeriodo();
+        this.mbDetalle.cambioDePeriodo();
         this.cargarImpuestosDetalle();
         this.mbDetalle.setSoloLectura(true);
         this.mbDetalle.setDetalle(null);
@@ -129,15 +129,15 @@ public class FrmImpuestos_No implements Serializable {
     }
 
     private void cargarImpuestosDetalle() {
-        int idZona = 0;
-        if (this.zona != null) {
-            idZona = this.zona.getIdZona();
-        }
-        int idGrupo = 0;
-        if (this.grupo != null) {
-            idGrupo = this.grupo.getIdGrupo();
-        }
-        this.mbDetalle.cargarDetalles(idZona, idGrupo);
+//        int idZona = 0;
+//        if (this.zona != null) {
+//            idZona = this.zona.getIdZona();
+//        }
+//        int idGrupo = 0;
+//        if (this.grupo != null) {
+//            idGrupo = this.grupo.getIdGrupo();
+//        }
+//        this.mbDetalle.cargarDetalles(idZona, idGrupo);
     }
     /*
     public ImpuestoDetalle getDetalle() {

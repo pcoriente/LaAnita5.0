@@ -4,6 +4,7 @@ import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.TimeZone;
 import javax.faces.bean.ManagedProperty;
 import proveedores.dominio.MiniProveedor;
 import proveedores.dominio.ProveedorProducto;
@@ -27,6 +28,7 @@ public class MbProveedoresListas implements Serializable {
     private ProveedorProducto producto;
     private ProveedorProductoPrecio precio;
     private ProveedorProductoOferta oferta;
+    private TimeZone zonaHoraria=TimeZone.getDefault();
     
     private ArrayList<Accion> acciones;
     @ManagedProperty(value="#{mbAcciones}")
@@ -283,11 +285,18 @@ public class MbProveedoresListas implements Serializable {
         this.mbPrecios = mbPrecios;
     }
 
-//    public MbProductosBuscar getMbBuscar() {
-//        return mbBuscar;
-//    }
-//
-//    public void setMbBuscar(MbProductosBuscar mbBuscar) {
-//        this.mbBuscar = mbBuscar;
-//    }
+    //    public MbProductosBuscar getMbBuscar() {
+    //        return mbBuscar;
+    //    }
+    //
+    //    public void setMbBuscar(MbProductosBuscar mbBuscar) {
+    //        this.mbBuscar = mbBuscar;
+    //    }
+    public TimeZone getZonaHoraria() {
+        return zonaHoraria;
+    }
+
+    public void setZonaHoraria(TimeZone zonaHoraria) {
+        this.zonaHoraria = zonaHoraria;
+    }
 }

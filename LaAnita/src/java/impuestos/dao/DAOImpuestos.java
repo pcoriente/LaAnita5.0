@@ -37,7 +37,21 @@ public class DAOImpuestos {
         Connection cn = this.ds.getConnection();
         Statement st = cn.createStatement();
         try {
-            st.executeUpdate("DELETE FROM impuestos WHERE idImpuesto="+idImpuesto);
+            st.executeUpdate("begin Transaction");
+            int total=0;
+            ResultSet rs=st.executeQuery("SELECT COUNT(*) AS total FROM impuestosGruposDetalle WHERE idImpuesto="+idImpuesto);
+            if(rs.next()) {
+                total=rs.getInt("total");
+            }
+            if(total==0) {
+                st.executeUpdate("DELETE FROM impuestos WHERE idImpuesto="+idImpuesto);
+            } else {
+                throw new SQLException("El impuesto no puede ser eliminado pues esta en uso !!!");
+            }
+            st.executeUpdate("commit Transaction");
+        } catch(SQLException e) {
+            st.executeUpdate("rollback Transaction");
+            throw e;
         } finally {
             cn.close();
         }

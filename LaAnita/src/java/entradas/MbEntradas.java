@@ -12,6 +12,7 @@ import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.TimeZone;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedProperty;
@@ -66,6 +67,7 @@ public class MbEntradas implements Serializable {
     private int idModulo;
     private DAOMovimientos dao;
     private DAOImpuestosProducto daoImps;
+    private TimeZone zonaHoraria=TimeZone.getDefault();
 
     public MbEntradas() throws NamingException {
         this.mbAcciones = new MbAcciones();
@@ -452,6 +454,21 @@ public class MbEntradas implements Serializable {
         e.setIdUsuario(to.getIdUsuario());
         return e;
     }
+    
+    public void cancelarProductoOficina() {
+//        this.entradaProducto.setProducto(this.resEntradaProducto.getProducto());
+        this.entradaProducto.setCantOrdenada(this.resEntradaProducto.getCantOrdenada());
+        this.entradaProducto.setCantFacturada(this.resEntradaProducto.getCantFacturada());
+        this.entradaProducto.setCantSinCargo(this.resEntradaProducto.getCantSinCargo());
+        this.entradaProducto.setCantRecibida(this.resEntradaProducto.getCantRecibida());
+        this.entradaProducto.setCosto(this.resEntradaProducto.getCosto());
+        this.entradaProducto.setDesctoProducto1(this.resEntradaProducto.getDesctoProducto1());
+        this.entradaProducto.setDesctoProducto2(this.resEntradaProducto.getDesctoProducto2());
+        this.entradaProducto.setDesctoConfidencial(this.resEntradaProducto.getDesctoConfidencial());
+        this.entradaProducto.setUnitario(this.resEntradaProducto.getUnitario());
+        this.entradaProducto.setNeto(this.resEntradaProducto.getNeto());
+        this.entradaProducto.setImporte(this.resEntradaProducto.getImporte());
+    }
 
     public void cambiaPrecios() {
         this.entrada.setSubTotal(0.00);
@@ -511,6 +528,11 @@ public class MbEntradas implements Serializable {
         }
         return impuestos;
     }
+    
+    public void actualizaTotales() {
+        this.restaTotales();
+        this.sumaTotales();
+    }
 
     private void sumaTotales() {
         double suma;
@@ -544,16 +566,16 @@ public class MbEntradas implements Serializable {
     }
 
     public void cambiaDescto() {
-        restaTotales();
+//        restaTotales();
         calculaProducto();
-        sumaTotales();
+//        sumaTotales();
     }
 
     public void cambiaPrecio() {
-        restaTotales();
+//        restaTotales();
         this.entradaProducto.setCosto(this.entradaProducto.getCosto() * this.entrada.getTipoCambio());
         calculaProducto();
-        sumaTotales();
+//        sumaTotales();
     }
 
     public void cambiaCantSinCargo() {
@@ -562,9 +584,11 @@ public class MbEntradas implements Serializable {
         if (this.entradaProducto.getCantSinCargo() > this.entradaProducto.getCantFacturada()) {
             ok = false;
             fMsg.setDetail("La cantidad sin cargo no puede ser mayor a la cantidad facturada");
+        } else {
+            calculaProducto();
         }
         if (!ok) {
-            this.entradaProducto.setCantFacturada(0.00);
+            this.entradaProducto.setCantSinCargo(0.00);
             FacesContext.getCurrentInstance().addMessage(null, fMsg);
         }
     }
@@ -572,29 +596,15 @@ public class MbEntradas implements Serializable {
     public void cambiaCantFacturada() {
         boolean ok = true;
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "cambiaCantFacturada");
-        restaTotales();
+//        restaTotales();
         calculaProducto();
-        sumaTotales();
+//        sumaTotales();
         if (!ok) {
             this.entradaProducto.setCantFacturada(0.00);
             FacesContext.getCurrentInstance().addMessage(null, fMsg);
         }
     }
-
-    public void respaldaFila() {
-        this.resEntradaProducto.setCantOrdenada(this.entradaProducto.getCantOrdenada());
-        this.resEntradaProducto.setCantFacturada(this.entradaProducto.getCantFacturada());
-        this.resEntradaProducto.setCantRecibida(this.entradaProducto.getCantRecibida());
-        this.resEntradaProducto.setDesctoConfidencial(this.entradaProducto.getDesctoConfidencial());
-        this.resEntradaProducto.setDesctoProducto1(this.entradaProducto.getDesctoProducto1());
-        this.resEntradaProducto.setDesctoProducto2(this.entradaProducto.getDesctoProducto2());
-        this.resEntradaProducto.setProducto(this.entradaProducto.getProducto());
-        this.resEntradaProducto.setImporte(this.entradaProducto.getImporte());
-        this.resEntradaProducto.setNeto(this.entradaProducto.getNeto());
-        this.resEntradaProducto.setUnitario(this.entradaProducto.getUnitario());
-        this.resEntradaProducto.setCosto(this.entradaProducto.getCosto());
-    }
-
+    
     private void calculaProducto() {
         double unitario = this.entradaProducto.getCosto();
         unitario *= (1 - this.entrada.getDesctoComercial() / 100.00);
@@ -602,12 +612,30 @@ public class MbEntradas implements Serializable {
         unitario *= (1 - this.entradaProducto.getDesctoProducto1() / 100.00);
         unitario *= (1 - this.entradaProducto.getDesctoProducto2() / 100.00);
         unitario *= (1 - this.entradaProducto.getDesctoConfidencial() / 100.00);
+        if(this.entradaProducto.getCantSinCargo()!=0) {
+            unitario = unitario * this.entradaProducto.getCantFacturada() / (this.entradaProducto.getCantFacturada() + this.entradaProducto.getCantSinCargo());
+        }
         this.entradaProducto.setUnitario(unitario);
         double neto = unitario + calculaImpuestos();
         this.entradaProducto.setNeto(neto);
-        double subTotal = this.entradaProducto.getUnitario() * this.entradaProducto.getCantFacturada();
+        double subTotal = this.entradaProducto.getUnitario() * (this.entradaProducto.getCantFacturada()+this.entradaProducto.getCantSinCargo());
         this.entradaProducto.setImporte(subTotal);
-        this.respaldaFila();
+//        this.respaldaFila();
+    }
+
+    public void respaldaFila() {
+        this.resEntradaProducto.setProducto(this.entradaProducto.getProducto());
+        this.resEntradaProducto.setCantOrdenada(this.entradaProducto.getCantOrdenada());
+        this.resEntradaProducto.setCantFacturada(this.entradaProducto.getCantFacturada());
+        this.resEntradaProducto.setCantSinCargo(this.entradaProducto.getCantSinCargo());
+        this.resEntradaProducto.setCantRecibida(this.entradaProducto.getCantRecibida());
+        this.resEntradaProducto.setCosto(this.entradaProducto.getCosto());
+        this.resEntradaProducto.setDesctoProducto1(this.entradaProducto.getDesctoProducto1());
+        this.resEntradaProducto.setDesctoProducto2(this.entradaProducto.getDesctoProducto2());
+        this.resEntradaProducto.setDesctoConfidencial(this.entradaProducto.getDesctoConfidencial());
+        this.resEntradaProducto.setUnitario(this.entradaProducto.getUnitario());
+        this.resEntradaProducto.setNeto(this.entradaProducto.getNeto());
+        this.resEntradaProducto.setImporte(this.entradaProducto.getImporte());
     }
 
     public void actualizaProductosSeleccionados() {
@@ -853,5 +881,13 @@ public class MbEntradas implements Serializable {
 
     public void setMbAlmacenes(MbAlmacenesJS mbAlmacenes) {
         this.mbAlmacenes = mbAlmacenes;
+    }
+
+    public TimeZone getZonaHoraria() {
+        return zonaHoraria;
+    }
+
+    public void setZonaHoraria(TimeZone zonaHoraria) {
+        this.zonaHoraria = zonaHoraria;
     }
 }

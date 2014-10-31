@@ -59,7 +59,7 @@ public class DAOZonas {
     
     public int agregar(ImpuestoZona zona) throws SQLException {
         int idZona=0;
-        String strSQL="INSERT INTO ImpuestosZonas (zona) VALUES ('"+zona.getZona()+"')";
+        String strSQL="INSERT INTO impuestosZonas (zona) VALUES ('"+zona.getZona()+"')";
         Connection cn = this.ds.getConnection();
         Statement st = cn.createStatement();
         try {
@@ -80,7 +80,7 @@ public class DAOZonas {
     }
     
     public void modificar(ImpuestoZona zona) throws SQLException {
-        String strSQL="UPDATE ImpuestosZonas SET zona='"+zona.getZona()+"' WHERE idZona="+zona.getIdZona();
+        String strSQL="UPDATE impuestosZonas SET zona='"+zona.getZona()+"' WHERE idZona="+zona.getIdZona();
         Connection cn = this.ds.getConnection();
         Statement st = cn.createStatement();
         try {

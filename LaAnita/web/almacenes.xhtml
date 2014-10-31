@@ -86,7 +86,7 @@
                                 <p:column >
                                     <p:commandButton id="btnEditarDireccion" icon="ui-icon-pencil" title="Editar" 
                                                      process="@this direccion" action="#{mbAlmacenes.mttoDireccion('direccion')}" 
-                                                     update="mttoDireccion" oncomplete="mttoDireccionesDialog.show();" />
+                                                     update="mttoDireccion" oncomplete="PF('mttoDireccionesDialog').show();" />
                                 </p:column>
                             </p:row>
                             <p:row >
@@ -103,7 +103,7 @@
                                 <p:column >
                                     <p:commandButton id="btnMttoContactos" icon="ui-icon-pencil" title="Mtto.Contactos" 
                                                      process="@this contacto" actionListener="#{mbAlmacenes.mttoContacto()}" 
-                                                     update="msgs mttoContactos" oncomplete="mttoContactosDialog.show()" />
+                                                     update="msgs mttoContactos" oncomplete="PF('mttoContactosDialog').show()" />
                                 </p:column>
                             </p:row>
                             <p:row >
@@ -121,7 +121,7 @@
                                     <p:commandButton id="btnMttoTelefonos" icon="ui-icon-pencil" title="Mtto.Teléfonos" 
                                                      disabled="#{mbAlmacenes.contacto.idContacto==0}"
                                                      process="@this telefono" actionListener="#{mbAlmacenes.mttoTelefono()}" 
-                                                     update="msgs mttoTelefonos" oncomplete="mttoTelefonosDialog.show()" />
+                                                     update="msgs mttoTelefonos" oncomplete="PF('mttoTelefonosDialog').show()" />
                                 </p:column>
                             </p:row>
                             <f:facet name="footer" >
@@ -193,7 +193,7 @@
                                 <p:column >
                                     <p:commandButton id="btnAgregarTelefonosTipos" icon="ui-icon-pencil" title="Mtto. Telefonos Tipos" 
                                                      process="@this cmbTelefonoTipo" actionListener="#{mbAlmacenes.mttoTelefonoTipo()}" 
-                                                     update="mttoTelefonosTipos" oncomplete="mttoTelefonosTiposDialog.show()" />
+                                                     update="mttoTelefonosTipos" oncomplete="PF('mttoTelefonosTiposDialog').show()" />
                                 </p:column>
                             </p:row>
                             <p:row >
@@ -231,16 +231,16 @@
                                                          oncomplete="handleTelefono(xhr, status, args)" />
                                         <p:commandButton id="btnEliminarTelefono" value="Eliminar"
                                                          disabled="#{mbAlmacenes.mbContactos.mbTelefonos.telefono.idTelefono==0}" 
-                                                         type="button" onclick="eTel.show();" />
+                                                         type="button" onclick="PF('eTel').show();" />
                                     </p:column>
                                 </p:row>
                             </f:facet>
                         </p:panelGrid>
                     </p:dialog>
                     <p:confirmDialog message="Esta seguro de eliminar el teléfono ?" header="Eliminar un teléfono de un contacto" widgetVar="eTel" >
-                        <p:commandButton value="No, cancelar" onclick="eTel.hide();" type="button" />
+                        <p:commandButton value="No, cancelar" onclick="PF('eTel').hide();" type="button" />
                         <p:commandButton value="Si, seguro" actionListener="#{mbAlmacenes.eliminarTelefono()}" 
-                                         update="messages2 telefono" oncomplete="eTel.hide();handleTelefono(xhr, status, args);"/>
+                                         update="messages2 telefono" oncomplete="PF('eTel').hide();handleTelefono(xhr, status, args);"/>
                     </p:confirmDialog>
                     <p:dialog header="MANTENIMIENTO DE CONTACTOS" widgetVar="mttoContactosDialog" resizable="false"
                               style="width: 500px;" modal="true" >
@@ -284,17 +284,17 @@
                                                          actionListener="#{mbAlmacenes.grabarContacto()}"
                                                          update="contacto telefono btnMttoTelefonos" 
                                                          oncomplete="handleContacto(xhr, status, args)" />
-                                        <p:commandButton id="btnEliminarContacto" value="Eliminar" type="button" onclick="eContacto.show();" />
+                                        <p:commandButton id="btnEliminarContacto" value="Eliminar" type="button" onclick="PF('eContacto').show();" />
                                     </p:column>
                                 </p:row>
                             </f:facet>
                         </p:panelGrid>
                     </p:dialog>
                     <p:confirmDialog message="Esta seguro de eliminar el contacto ?" header="Eliminar un contacto" widgetVar="eContacto" >
-                        <p:commandButton value="No, cancelar" onclick="eContacto.hide();" type="button" />
+                        <p:commandButton value="No, cancelar" onclick="PF('eContacto').hide();" type="button" />
                         <p:commandButton value="Si, seguro" actionListener="#{mbAlmacenes.eliminarContacto()}" 
                                          update="messages3 contacto telefono btnMttoTelefonos" 
-                                         oncomplete="eContacto.hide();handleContacto(xhr, status, args);"/>
+                                         oncomplete="PF('eContacto').hide();handleContacto(xhr, status, args);"/>
                     </p:confirmDialog>
                     <p:dialog header="MANTENIMIENTO DE DIRECCIONES" widgetVar="mttoDireccionesDialog" resizable="false"
                               style="width: 500px;" modal="true" >
@@ -430,32 +430,32 @@
                 <script type="text/javascript" >
                     function handleContacto(xhr, status, args) {
                         if (args.validationFailed || !args.okContacto) {
-                            mttoContactosDialog.jq.effect("shake", {times: 5}, 100);
+                            PF('mttoContactosDialog').jq.effect("shake", {times: 5}, 100);
                         } else {
-                            mttoContactosDialog.hide();
+                            PF('mttoContactosDialog').hide();
                         }
                     }
                     
                     function handleTelefono(xhr, status, args) {
                         if (args.validationFailed || !args.okTelefono) {
-                            mttoTelefonosDialog.jq.effect("shake", {times: 5}, 100);
+                            PF('mttoTelefonosDialog').jq.effect("shake", {times: 5}, 100);
                         } else {
-                            mttoTelefonosDialog.hide();
+                            PF('mttoTelefonosDialog').hide();
                         }
                     }
                     
                     function handleTelefonoTipo(xhr, status, args) {
                         if (args.validationFailed || !args.okTelefonoTipo) {
-                            mttoTelefonosTiposDialog.jq.effect("shake", {times: 5}, 100);
+                            PF('mttoTelefonosTiposDialog').jq.effect("shake", {times: 5}, 100);
                         } else {
-                            mttoTelefonosTiposDialog.hide();
+                            PF('mttoTelefonosTiposDialog').hide();
                         }
                     }
                     function handleDireccion(xhr, status, args) {
                         if (args.validationFailed || !args.okDireccion) {
-                            mttoDireccionesDialog.jq.effect("shake", {times: 5}, 100);
+                            PF('mttoDireccionesDialog').jq.effect("shake", {times: 5}, 100);
                         } else {
-                            mttoDireccionesDialog.hide();
+                            PF('mttoDireccionesDialog').hide();
                         }
                     }
                 </script>

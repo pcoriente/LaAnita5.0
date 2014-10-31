@@ -14,6 +14,10 @@ public class Impuesto implements Serializable {
     private boolean aplicable;
     private int modo; // 1. Aplica % sobre la base; 2. Aplica importe por pieza
     private boolean acreditable;
+    
+    public Impuesto() {
+        this.impuesto="";
+    }
 
     public Impuesto(int idImpuesto, String impuesto, boolean aplicable, int modo, boolean acreditable, boolean acumulable) {
         this.idImpuesto = idImpuesto;
@@ -28,21 +32,21 @@ public class Impuesto implements Serializable {
         String strModo = "";
         if (this.aplicable) {
             if (this.modo == 1) {
-                strModo = "Porcentaje sobre base";
+                strModo = "PCTJE. SOBRE BASE";
             } else if (this.modo == 2) {
-                strModo = "Importe por pieza";
+                strModo = "IMPORTE POR PIEZA";
             }
         }
         return strModo;
     }
 
     public String aplicacion() {
-        return (this.aplicable ? (this.acreditable ? "ACREDITABLE" : "RETENIDO") : "");
+        return (this.aplicable?(this.acreditable?"ACREDITABLE":"RETENIDO")+", "+(this.modo==1?"PCTJE. SOBRE BASE":"IMPORTE POR PIEZA")+(this.acumulable?", ACUMULABLE":"") : "NO APLICA");
     }
 
     @Override
     public String toString() {
-        return this.impuesto + (this.aplicable ? (this.acreditable ? " ACREDITABLE" : " RETENIDO") : "");
+        return this.impuesto+(this.aplicable?(this.acreditable?", ACREDITABLE":", RETENIDO")+", "+(this.modo==1?"PCTJE. SOBRE BASE":"IMPORTE POR PIEZA")+(this.acumulable?", ACUMULABLE":"") : "");
     }
 
     @Override
@@ -76,7 +80,7 @@ public class Impuesto implements Serializable {
     }
 
     public String getImpuesto() {
-        return impuesto;
+        return this.impuesto;
     }
 
     public void setImpuesto(String impuesto) {
@@ -92,7 +96,7 @@ public class Impuesto implements Serializable {
     }
 
     public int getModo() {
-        return modo;
+        return this.modo;
     }
 
     public void setModo(int modo) {

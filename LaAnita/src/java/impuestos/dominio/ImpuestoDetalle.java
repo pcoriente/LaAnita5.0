@@ -1,6 +1,7 @@
 package impuestos.dominio;
 
 import java.util.Date;
+import utilerias.Utilerias;
 
 /**
  *
@@ -10,6 +11,7 @@ public class ImpuestoDetalle {
     //private ImpuestoZona zona;
     //private ImpuestoGrupo grupo;
     private Impuesto impuesto;
+
     private Date fechaInicial;
     private Date fechaFinal;
     //private Date finFecha;
@@ -19,6 +21,12 @@ public class ImpuestoDetalle {
     public ImpuestoDetalle() {
         this.impuesto=new Impuesto(0, "", false, 1, false, false);
         //this.fechaInicialSiguiente=new Date();
+    }
+    
+    @Override
+    public String toString() {
+        String tmp=Utilerias.formatoNumero("######.###", this.valor);
+        return this.impuesto.getImpuesto()+(this.impuesto.isAplicable()?" "+(this.impuesto.getModo()==1?tmp+"%":"$"+tmp):"");
     }
     /*
     public ImpuestoZona getZona() {

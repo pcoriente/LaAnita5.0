@@ -172,7 +172,7 @@
                                     <p:commandButton id="btnBuscarOC" icon="ui-icon-search" title="Buscar Orden de Compra" 
                                                      disabled="#{mbEntradas.entrada.idOrdenCompra!=0 or mbEntradas.sinOrden}" 
                                                      actionListener="#{mbEntradas.cargaOrdenes()}"
-                                                     update="listaOrdenes" oncomplete="listaOrdenesDlg.show();" />
+                                                     update="listaOrdenes" oncomplete="PF('listaOrdenesDlg').show();" />
                                 </p:column>
                                 <p:column >
                                     <p:selectBooleanCheckbox id="chkSinOrden" itemLabel="Sin Orden" 
@@ -188,7 +188,7 @@
                                     <p:commandButton id="btnEquivalencias" icon="ui-icon-search" title="Buscar Productos" 
                                                      disabled="#{not mbEntradas.sinOrden}"
                                                      process="@this" actionListener="#{mbEntradas.mbBuscar.inicializar()}" 
-                                                     update="buscarProductos listaBuscarProductos" oncomplete="buscarProductoDlg.show()" />
+                                                     update="buscarProductos listaBuscarProductos" oncomplete="PF('buscarProductoDlg').show()" />
                                     <p:commandButton icon="ui-icon-arrowreturnthick-1-w" title="Terminar"
                                                      process="@this" actionListener="#{mbEntradas.salir()}" update="main" />
                                 </p:column>
@@ -277,7 +277,7 @@
                                 <p:commandButton id="seleccion" value="Seleccionar" 
                                                  disabled="#{mbEntradas.mbBuscar.producto==null}"
                                                  actionListener="#{mbEntradas.actualizaProductoSeleccionado()}"
-                                                 update=":main:detalleEntrada" oncomplete="buscarProductoDlg.hide()" />
+                                                 update=":main:detalleEntrada" oncomplete="PF('buscarProductoDlg').hide()" />
                             </f:facet>
                         </p:dataTable>
                     </p:dialog>
@@ -288,7 +288,7 @@
                                      emptyMessage="No hay elementos que desplegar" scrollable="true" scrollHeight="220" >
                             <p:ajax process="@this" event="rowSelect" listener="#{mbEntradas.cargaDetalleOrdenCompra}" 
                                     update=":main:msgs :main:txtOrdenCompra :main:btnBuscarOC :main:chkSinOrden :main:detalleEntrada" 
-                                    oncomplete="listaOrdenesDlg.hide();" />
+                                    oncomplete="PF('listaOrdenesDlg').hide();" />
                             <p:column headerText="OC" style="width: 60px;" >
                                 <h:outputText value="#{orden.idOrdenCompra}" style="width: 60px;" />
                             </p:column>
@@ -340,7 +340,7 @@
                                                          actionListener="#{mbEntradas.mbComprobantes.grabar()}" update=":main:cmbComprobante lnkEditarComprobante" 
                                                          oncomplete="handleCerrarMttoComprobanteDlg(xhr, status, args)" />
                                         <p:commandButton icon="ui-icon-arrowreturnthick-1-w" title="Terminar" 
-                                                         onclick="mttoComprobanteDlg.hide();" immediate="true" />
+                                                         onclick="PF('mttoComprobanteDlg').hide();" immediate="true" />
                                     </p:column>
                                 </p:row>
                             </f:facet>
@@ -350,17 +350,17 @@
                 <script type="text/javascript">
                     function handleBuscar(xhr, status, args) {
                         if (!(args.validationFailed || !args.okBuscar)) {
-                            buscarProductoDlg.hide();
+                            PF('buscarProductoDlg').hide();
                         }
                     }
                     function handleCerrarMttoComprobanteDlg(xhr, status, args) {
                         if (!(args.validationFailed || !args.okComprobante)) {
-                            mttoComprobanteDlg.hide();
+                            PF('mttoComprobanteDlg').hide();
                         }
                     }
                     function handleAbrirMttoComprobanteDlg(xhr, status, args) {
                         if (!(args.validationFailed || !args.okComprobante)) {
-                            mttoComprobanteDlg.show();
+                            PF('mttoComprobanteDlg').show();
                         }
                     }
                 </script>

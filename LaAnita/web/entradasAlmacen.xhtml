@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">   
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:h="http://java.sun.com/jsf/html" 
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:p="http://primefaces.org/ui"
       xmlns:pe="http://primefaces.org/ui/extensions"
@@ -83,7 +83,7 @@
                                 <p:column style="text-align: right;" >
                                     <p:commandButton id="btnBuscarEmpaques" icon="ui-icon-search" title="Buscar Productos" 
                                                      process="@this" actionListener="#{mbEntradasAlmacen.mbBuscar.inicializar()}" 
-                                                     update="buscarProductos listaBuscarProductos" oncomplete="buscarProductoDlg.show()" />
+                                                     update="buscarProductos listaBuscarProductos" oncomplete="PF('buscarProductoDlg').show()" />
                                 </p:column>
                             </p:row>
                         </p:panelGrid>
@@ -115,7 +115,7 @@
                                      var="entrada" rowKey="#{entrada.idMovto}" selectionMode="single"
                                      emptyMessage="No hay elementos que desplegar" scrollable="true" scrollHeight="220" >
                             <p:ajax process="@this" event="rowSelect" listener="#{mbEntradasAlmacen.cargaDetalleEntrada}" 
-                                    update=":main" oncomplete="pendientesDlg.hide();" />
+                                    update=":main" oncomplete="PF('pendientesDlg').hide();" />
                             <p:column headerText="ALMACEN" style="width: 150px;" >
                                 <h:outputText value="#{entrada.almacen}" style="width: 150px;" />
                             </p:column>
@@ -240,7 +240,7 @@
                                 <p:commandButton id="seleccion" value="Seleccionar" 
                                                  disabled="#{mbEntradasAlmacen.mbBuscar.producto==null}"
                                                  actionListener="#{mbEntradasAlmacen.actualizaProductoSeleccionado()}"
-                                                 update=":main:detalleEntrada" oncomplete="buscarProductoDlg.hide()" />
+                                                 update=":main:detalleEntrada" oncomplete="PF('buscarProductoDlg').hide()" />
                             </f:facet>
                         </p:dataTable>
                     </p:dialog>
@@ -248,22 +248,22 @@
                 <script type="text/javascript">
                     function handleAbrirPendientes(xhr, status, args) {
                         if (!(args.validationFailed || !args.ok)) {
-                            pendientesDlg.show();
+                            PF('pendientesDlg').show();
                         }
                     }
                     function handleCerrarEditarLotes(xhr, status, args) {
                         if (!(args.validationFailed || !args.okLotes)) {
-                            editarLotesDlg.hide();
+                            PF('editarLotesDlg').hide();
                         }
                     }
                     function handleAbrirEditarLotes(xhr, status, args) {
                         if (!(args.validationFailed || !args.okLotes)) {
-                            editarLotesDlg.show();
+                            PF('editarLotesDlg').show();
                         }
                     }
                     function handleBuscar(xhr, status, args) {
                         if (!(args.validationFailed || !args.okBuscar)) {
-                            buscarProductoDlg.hide();
+                            PF('buscarProductoDlg').hide();
                         }
                     }
                 </script>

@@ -83,7 +83,7 @@
                                 <p:column style="text-align: right;" >
                                     <p:commandButton id="btnBuscarEmpaques" icon="ui-icon-search" title="Buscar Productos" 
                                                      process="@this" actionListener="#{mbSalidasOficina.mbBuscar.inicializar()}" 
-                                                     update="buscarProductos listaBuscarProductos" oncomplete="buscarProductoDlg.show()" />
+                                                     update="buscarProductos listaBuscarProductos" oncomplete="PF('buscarProductoDlg').show()" />
                                 </p:column>
                             </p:row>
                         </p:panelGrid>
@@ -114,7 +114,7 @@
                                      var="salida" rowKey="#{salida.idMovto}" selectionMode="single"
                                      emptyMessage="No hay elementos que desplegar" scrollable="true" scrollHeight="220" >
                             <p:ajax process="@this" event="rowSelect" listener="#{mbSalidasOficina.cargaDetalleSalida}" 
-                                    update=":main" oncomplete="pendientesDlg.hide();" />
+                                    update=":main" oncomplete="PF('pendientesDlg').hide();" />
                             <p:column headerText="ALMACEN" style="width: 150px;" >
                                 <h:outputText value="#{salida.almacen}" style="width: 150px;" />
                             </p:column>
@@ -187,7 +187,7 @@
                                 <p:commandButton id="seleccion" value="Seleccionar" 
                                                  disabled="#{mbSalidasOficina.mbBuscar.producto==null}"
                                                  actionListener="#{mbSalidasOficina.actualizaProductoSeleccionado()}"
-                                                 update=":main:detalleSalida" oncomplete="buscarProductoDlg.hide()" />
+                                                 update=":main:detalleSalida" oncomplete="PF('buscarProductoDlg').hide()" />
                             </f:facet>
                         </p:dataTable>
                     </p:dialog>
@@ -195,12 +195,12 @@
                 <script type="text/javascript">
                     function handleAbrirPendientes(xhr, status, args) {
                         if (!(args.validationFailed || !args.ok)) {
-                            pendientesDlg.show();
+                            PF('pendientesDlg').show();
                         }
                     }
                     function handleBuscar(xhr, status, args) {
                         if (!(args.validationFailed || !args.okBuscar)) {
-                            buscarProductoDlg.hide();
+                            PF('buscarProductoDlg').hide();
                         }
                     }
                 </script>

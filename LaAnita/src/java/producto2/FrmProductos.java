@@ -154,7 +154,8 @@ public class FrmProductos implements Serializable {
     }
     
     public void obtenerProductos() {
-        this.mbBuscar.obtenerProductos(this.producto.getArticulo().getIdArticulo());
+//        this.mbBuscar.obtenerProductos(this.producto.getArticulo().getIdArticulo());
+        this.mbBuscar.obtenerProductos(this.mbArticulos.getArticulo().getIdArticulo());
     }
     
     public void actualizaProductoSeleccionado() {

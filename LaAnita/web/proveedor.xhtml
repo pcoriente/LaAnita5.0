@@ -41,11 +41,11 @@
                                 <p:column style="width: 90px;" >
                                     <p:commandButton icon="ui-icon-search" title="Buscar Contribuyentes"
                                                      process="@this" actionListener="#{mbProveedores.mbBuscarContribuyente.inicializar()}" 
-                                                     update="buscarProveedores listaContribuyentes" oncomplete="buscarProvDlg.show()" />
+                                                     update="buscarProveedores listaContribuyentes" oncomplete="PF('buscarProvDlg').show()" />
                                     <p:commandButton id="btnAgregarContribuyente" icon="ui-icon-document" title="Nuevo Contribuyente" 
                                                      disabled="#{mbProveedores.proveedor.idProveedor!=0 or not mbProveedores.mbAcciones.validarAccion('btnAgregarContribuyente')}"
                                                      process="@this" actionListener="#{mbProveedores.nuevoContribuyente()}"
-                                                     update="mttoContribuyentes" oncomplete="mttoContribDialog.show()" />
+                                                     update="mttoContribuyentes" oncomplete="PF('mttoContribDialog').show()" />
                                 </p:column>
                                 <p:column style="width: 50px;" >
                                     <h:outputLabel for="curp" value="CURP:" styleClass="colorLetra"/>
@@ -70,7 +70,7 @@
                                     <p:commandButton id="btnEditarContribuyente" icon="ui-icon-pencil" title="Editar Contribuyente" 
                                                      disabled="#{not mbProveedores.mbAcciones.validarAccion('btnEditarContribuyente')}"
                                                      process="@this" actionListener="#{mbProveedores.mttoContribuyente()}"
-                                                     update="mttoContribuyentes" oncomplete="mttoContribDialog.show()" />
+                                                     update="mttoContribuyentes" oncomplete="PF('mttoContribDialog').show()" />
                                 </p:column>
                             </p:row>
                             <p:row >
@@ -105,7 +105,7 @@
                                     <p:commandButton id="btnMttoClasificaciones" icon="ui-icon-pencil" title="Mtto.Clasificaciones" 
                                                      disabled="#{not mbProveedores.mbAcciones.validarAccion('btnMttoClasificaciones')}"
                                                      process="@this clasificacion" actionListener="#{mbProveedores.mttoClasificacion()}" 
-                                                     update="msgs mttoClasificaciones" oncomplete="mttoClasifDlg.show()" />
+                                                     update="msgs mttoClasificaciones" oncomplete="PF('mttoClasifDlg').show()" />
                                 </p:column>
                             </p:row>
                             <p:row >
@@ -122,7 +122,7 @@
                                     <p:commandButton id="btnMttoSubClasificaciones" icon="ui-icon-pencil" title="Mtto.SubClasificaciones" 
                                                      disabled="#{mbProveedores.proveedor.clasificacion.idClasificacion==0 or not mbProveedores.mbAcciones.validarAccion('btnMttoSubClasificaciones')}"
                                                      process="@this subClasificacion" actionListener="#{mbProveedores.mttoSubClasificacion()}"
-                                                     update="msgs mttoSubClasificaciones" oncomplete="mttoSubClasifDlg.show()"/>
+                                                     update="msgs mttoSubClasificaciones" oncomplete="PF('mttoSubClasifDlg').show()"/>
                                 </p:column>
                             </p:row>
                             <p:row >
@@ -139,7 +139,7 @@
                                     <p:commandButton id="btnMttoTipoTerceros" icon="ui-icon-pencil" title="Mtto.TipoTerceros" 
                                                      disabled="#{not mbProveedores.mbAcciones.validarAccion('btnMttoTipoTerceros')}"
                                                      process="@this tipoTercero" actionListener="#{mbProveedores.mttoTipoTercero()}" 
-                                                     update="msgs mttoTipoTerceros" oncomplete="mttoTiposTerDlg.show()" />
+                                                     update="msgs mttoTipoTerceros" oncomplete="PF('mttoTiposTerDlg').show()" />
                                 </p:column>
                             </p:row>
                             <p:row >
@@ -156,7 +156,7 @@
                                     <p:commandButton id="btnMttoTipoOperaciones" icon="ui-icon-pencil" title="Mtto.Tipo Operaciones" 
                                                      disabled="#{not mbProveedores.mbAcciones.validarAccion('btnMttoTipoOperaciones')}"
                                                      process="@this tipoOperacion" actionListener="#{mbProveedores.mttoTipoOperacion()}" 
-                                                     update="msgs mttoTipoOperaciones" oncomplete="mttoTiposOperDlg.show()" />
+                                                     update="msgs mttoTipoOperaciones" oncomplete="PF('mttoTiposOperDlg').show()" />
                                 </p:column>
                             </p:row>
                             <p:row >
@@ -174,7 +174,7 @@
                                     <p:commandButton id="btnMttoContactos" icon="ui-icon-pencil" title="Mtto.Contactos" 
                                                      disabled="#{mbProveedores.proveedor.idProveedor==0}"
                                                      process="@this contacto" actionListener="#{mbProveedores.mttoContacto()}" 
-                                                     update="msgs mttoContactos" oncomplete="mttoContactosDialog.show()" />
+                                                     update="msgs mttoContactos" oncomplete="PF('mttoContactosDialog').show()" />
                                 </p:column>
                             </p:row>
                             <p:row >
@@ -191,7 +191,7 @@
                                     <p:commandButton id="btnMttoTelefonos" icon="ui-icon-pencil" title="Mtto.Teléfonos" 
                                                      disabled="#{mbProveedores.contacto.idContacto==0}"
                                                      process="@this telefono" actionListener="#{mbProveedores.mttoTelefono()}" 
-                                                     update="msgs mttoTelefonos" oncomplete="mttoTelefonosDialog.show()" />
+                                                     update="msgs mttoTelefonos" oncomplete="PF('mttoTelefonosDialog').show()" />
                                 </p:column>
                             </p:row>
                             <p:row >
@@ -336,7 +336,7 @@
                                 <p:column >
                                     <p:commandButton id="btnAgregarTelefonosTipos" icon="ui-icon-pencil" title="Mtto. Telefonos Tipos" 
                                                      process="@this cmbTelefonoTipo" actionListener="#{mbProveedores.mttoTelefonoTipo()}" 
-                                                     update="mttoTelefonosTipos" oncomplete="mttoTelefonosTiposDialog.show()" />
+                                                     update="mttoTelefonosTipos" oncomplete="PF('mttoTelefonosTiposDialog').show()" />
                                 </p:column>
                             </p:row>
                             <p:row >
@@ -374,16 +374,16 @@
                                                          oncomplete="handleTelefono(xhr, status, args)" />
                                         <p:commandButton id="btnEliminarTelefono" value="Eliminar"
                                                          disabled="#{mbProveedores.mbContactos.mbTelefonos.telefono.idTelefono==0}" 
-                                                         type="button" onclick="eTel.show();" />
+                                                         type="button" onclick="PF('eTel').show();" />
                                     </p:column>
                                 </p:row>
                             </f:facet>
                         </p:panelGrid>
                     </p:dialog>
                     <p:confirmDialog message="Esta seguro de eliminar el teléfono ?" header="Eliminar un teléfono de un contacto" widgetVar="eTel" >
-                        <p:commandButton value="No, cancelar" onclick="eTel.hide();" type="button" />
+                        <p:commandButton value="No, cancelar" onclick="PF('eTel').hide();" type="button" />
                         <p:commandButton value="Si, seguro" actionListener="#{mbProveedores.eliminarTelefono()}" 
-                                         update="messages2 telefono" oncomplete="eTel.hide();handleTelefono(xhr, status, args);"/>
+                                         update="messages2 telefono" oncomplete="PF('eTel').hide();handleTelefono(xhr, status, args);"/>
                     </p:confirmDialog>
                     <p:dialog header="MANTENIMIENTO DE CONTACTOS" widgetVar="mttoContactosDialog" resizable="false"
                               style="width: 500px;" modal="true" >
@@ -427,17 +427,17 @@
                                                          actionListener="#{mbProveedores.grabarContacto()}"
                                                          update="contacto telefono btnMttoTelefonos" 
                                                          oncomplete="handleContacto(xhr, status, args)" />
-                                        <p:commandButton id="btnEliminarContacto" value="Eliminar" type="button" onclick="eContacto.show();" />
+                                        <p:commandButton id="btnEliminarContacto" value="Eliminar" type="button" onclick="PF('eContacto').show();" />
                                     </p:column>
                                 </p:row>
                             </f:facet>
                         </p:panelGrid>
                     </p:dialog>
                     <p:confirmDialog message="Esta seguro de eliminar el contacto ?" header="Eliminar un contacto" widgetVar="eContacto" >
-                        <p:commandButton value="No, cancelar" onclick="eContacto.hide();" type="button" />
+                        <p:commandButton value="No, cancelar" onclick="PF('eContacto').hide();" type="button" />
                         <p:commandButton value="Si, seguro" actionListener="#{mbProveedores.eliminarContacto()}" 
                                          update="messages3 contacto telefono btnMttoTelefonos" 
-                                         oncomplete="eContacto.hide();handleContacto(xhr, status, args);"/>
+                                         oncomplete="PF('eContacto').hide();handleContacto(xhr, status, args);"/>
                     </p:confirmDialog>
                     <p:dialog header="MANTENIMIENTO DE CONTRIBUYENTES" widgetVar="mttoContribDialog" resizable="false"
                               style="width: 500px;" modal="true" >
@@ -532,7 +532,7 @@
                                                          process="@this txtTipoOperacion txtOperacion" 
                                                          actionListener="#{mbProveedores.grabarTipoOperacion()}"
                                                          update="tipoOperacion" oncomplete="handleTipoOperacion(xhr, status, args)" />
-                                        <p:commandButton id="btnEliminarTipoOperacion" value="Eliminar" type="button" onclick="eTipoOperacion.show();"
+                                        <p:commandButton id="btnEliminarTipoOperacion" value="Eliminar" type="button" onclick="PF('eTipoOperacion').show();"
                                                          disabled="#{mbProveedores.mbTipoOperacion.tipoOperacion.idTipoOperacion==0}" />
                                     </p:column>
                                 </p:row>
@@ -541,10 +541,10 @@
                     </p:dialog>
                     <p:confirmDialog message="Esta seguro de eliminar el tipod de operación ?" header="Eliminar un tipo de operación" 
                                      widgetVar="eTipoOperacion" >
-                        <p:commandButton value="No, cancelar" onclick="eTipoOperacion.hide();" type="button" />
+                        <p:commandButton value="No, cancelar" onclick="PF('eTipoOperacion').hide();" type="button" />
                         <p:commandButton value="Si, seguro" actionListener="#{mbProveedores.eliminarTipoOperacion()}" 
                                          update="messages7 tipoOperacion" 
-                                         oncomplete="eTipoOperacion.hide();handleTipoOperacion(xhr, status, args);"/>
+                                         oncomplete="PF('eTipoOperacion').hide();handleTipoOperacion(xhr, status, args);"/>
                     </p:confirmDialog>
                     <p:dialog header="MANTENIMIENTO DE TIPOS DE TERCEROS" widgetVar="mttoTiposTerDlg" resizable="false" style="width: 500px;" modal="true" >
                         <p:messages id="messages9" showDetail="true" autoUpdate="true" closable="true" />
@@ -574,7 +574,7 @@
                                                          process="@this txtTipoTercero txtTercero" 
                                                          actionListener="#{mbProveedores.grabarTipoTercero()}"
                                                          update="messages9 tipoTercero" oncomplete="handleTipoTercero(xhr, status, args)" />
-                                        <p:commandButton id="btnEliminarTipoTercero" value="Eliminar" type="button" onclick="eTipoTercero.show();"
+                                        <p:commandButton id="btnEliminarTipoTercero" value="Eliminar" type="button" onclick="PF('eTipoTercero').show();"
                                                          disabled="#{mbProveedores.mbTipoTerceros.tipoTercero.idTipoTercero==0}" />
                                     </p:column>
                                 </p:row>
@@ -583,10 +583,10 @@
                     </p:dialog>
                     <p:confirmDialog message="Esta seguro de eliminar el tipo de tercero ?" header="Eliminar un tipo de tercero" 
                                      widgetVar="eTipoTercero" >
-                        <p:commandButton value="No, cancelar" onclick="eTipoTercero.hide();" type="button" />
+                        <p:commandButton value="No, cancelar" onclick="PF('eTipoTercero').hide();" type="button" />
                         <p:commandButton value="Si, seguro" actionListener="#{mbProveedores.eliminarTipoTercero()}" 
                                          update="messages9 tipoTercero" 
-                                         oncomplete="eTipoTercero.hide();handleTipoTercero(xhr, status, args);"/>
+                                         oncomplete="PF('eTipoTercero').hide();handleTipoTercero(xhr, status, args);"/>
                     </p:confirmDialog>
                     <p:dialog header="MANTENIMIENTO DE SUBCLASIFICACIONES" widgetVar="mttoSubClasifDlg" resizable="false" style="width: 500px;" modal="true" >
                         <p:messages id="messages5" showDetail="true" autoUpdate="true" closable="true" />
@@ -606,7 +606,7 @@
                                         <p:commandButton id="btnGrabarSubClasificacion" value="Grabar" 
                                                          process="@this txtSubClasificacion" actionListener="#{mbProveedores.grabarSubClasificacion()}"
                                                          update="subClasificacion" oncomplete="handleSubClasificacion(xhr, status, args)" />
-                                        <p:commandButton id="btnEliminarSubClasificacion" value="Eliminar" type="button" onclick="eSubClasificacion.show();"
+                                        <p:commandButton id="btnEliminarSubClasificacion" value="Eliminar" type="button" onclick="PF('eSubClasificacion').show();"
                                                          disabled="#{mbProveedores.mbClasificaciones.subClasificacion.idSubClasificacion==0}" />
                                     </p:column>
                                 </p:row>
@@ -615,10 +615,10 @@
                     </p:dialog>
                     <p:confirmDialog message="Esta seguro de eliminar la subClasificacion ?" header="Eliminar una subClasificacion" 
                                      widgetVar="eSubClasificacion" >
-                        <p:commandButton value="No, cancelar" onclick="eSubClasificacion.hide();" type="button" />
+                        <p:commandButton value="No, cancelar" onclick="PF('eSubClasificacion').hide();" type="button" />
                         <p:commandButton value="Si, seguro" actionListener="#{mbProveedores.eliminarSubClasificacion()}" 
                                          update="messages5 subClasificacion" 
-                                         oncomplete="eSubClasificacion.hide();handleSubClasificacion(xhr, status, args);"/>
+                                         oncomplete="PF('eSubClasificacion').hide();handleSubClasificacion(xhr, status, args);"/>
                     </p:confirmDialog>
                     <p:dialog header="MANTENIMIENTO DE CLASIFICACIONES" widgetVar="mttoClasifDlg" resizable="false" style="width: 500px;" modal="true" >
                         <p:messages id="messages8" showDetail="true" autoUpdate="true" closable="true" />
@@ -639,7 +639,7 @@
                                                          process="@this txtClasificacion" actionListener="#{mbProveedores.grabarClasificacion()}"
                                                          update="clasificacion subClasificacion btnMttoSubClasificaciones" 
                                                          oncomplete="handleClasificacion(xhr, status, args)" />
-                                        <p:commandButton id="btnEliminarClasificacion" value="Eliminar" type="button" onclick="eClasificacion.show();"
+                                        <p:commandButton id="btnEliminarClasificacion" value="Eliminar" type="button" onclick="PF('eClasificacion').show();"
                                                          disabled="#{mbProveedores.mbClasificaciones.clasificacion.idClasificacion==0}" />
                                     </p:column>
                                 </p:row>
@@ -648,10 +648,10 @@
                     </p:dialog>
                     <p:confirmDialog message="Esta seguro de eliminar la clasificacion ?" header="Eliminar una clasificacion" 
                                      widgetVar="eClasificacion" >
-                        <p:commandButton value="No, cancelar" onclick="eClasificacion.hide();" type="button" />
+                        <p:commandButton value="No, cancelar" onclick="PF('eClasificacion').hide();" type="button" />
                         <p:commandButton value="Si, seguro" actionListener="#{mbProveedores.eliminarClasificacion()}" 
                                          update="messages8 clasificacion subClasificacion btnMttoSubClasificaciones" 
-                                         oncomplete="eClasificacion.hide();handleClasificacion(xhr, status, args);"/>
+                                         oncomplete="PF('eClasificacion').hide();handleClasificacion(xhr, status, args);"/>
                     </p:confirmDialog>
                     <p:dialog header="BUSCADOR DE PROVEEDORES" widgetVar="buscarProvDlg" resizable="false" style="width: 600px;" modal="true" >
                         <p:messages id="messages4" showDetail="true" closable="true" />
@@ -710,7 +710,7 @@
                                                  disabled="#{mbProveedores.mbBuscarContribuyente.contribuyente==null}"
                                                  actionListener="#{mbProveedores.seleccionaContribuyente()}"
                                                  update=":main:messages4 :main:contribuyente :main:rfc :main:curp :main:direccionFiscal" 
-                                                 oncomplete="buscarProvDlg.hide()" />
+                                                 oncomplete="PF('buscarProvDlg').hide()" />
                             </f:facet>
                         </p:dataTable>
                     </p:dialog>
@@ -718,71 +718,71 @@
                 <script type="text/javascript" >
                     function handleBuscarContribuyente(xhr, status, args) {
                         if (!(args.validationFailed || !args.okBuscarContribuyente)) {
-                            buscarProvDlg.hide();
+                            PF('buscarProvDlg').hide();
                         }
                     }
 
                     function handleClasificacion(xhr, status, args) {
                         if (args.validationFailed || !args.okClasificacion) {
-                            mttoClasifDlg.jq.effect("shake", {times: 5}, 100);
+                            PF('mttoClasifDlg').jq.effect("shake", {times: 5}, 100);
                         } else {
-                            mttoClasifDlg.hide();
+                            PF('mttoClasifDlg').hide();
                         }
                     }
                     
                     function handleSubClasificacion(xhr, status, args) {
                         if (args.validationFailed || !args.okSubClasificacion) {
-                            mttoSubClasifDlg.jq.effect("shake", {times: 5}, 100);
+                            PF('mttoSubClasifDlg').jq.effect("shake", {times: 5}, 100);
                         } else {
-                            mttoSubClasifDlg.hide();
+                            PF('mttoSubClasifDlg').hide();
                         }
                     }
                     
                     function handleTipoTercero(xhr, status, args) {
                         if (args.validationFailed || !args.okTipoTercero) {
-                            mttoTiposTerDlg.jq.effect("shake", {times: 5}, 100);
+                            PF('mttoTiposTerDlg').jq.effect("shake", {times: 5}, 100);
                         } else {
-                            mttoTiposTerDlg.hide();
+                            PF('mttoTiposTerDlg').hide();
                         }
                     }
                     
                     function handleTipoOperacion(xhr, status, args) {
                         if (args.validationFailed || !args.okTipoOperacion) {
-                            mttoTiposOperDlg.jq.effect("shake", {times: 5}, 100);
+                            PF('mttoTiposOperDlg').jq.effect("shake", {times: 5}, 100);
                         } else {
-                            mttoTiposOperDlg.hide();
+                            PF('mttoTiposOperDlg').hide();
                         }
                     }
                     
                     function handleContribuyente(xhr, status, args) {
                         if (args.validationFailed || !args.okContribuyente) {
-                            mttoContribDialog.jq.effect("shake", {times: 5}, 100);
+                            PF('mttoContribDialog').jq.effect("shake", {times: 5}, 100);
                         } else {
-                            mttoContribDialog.hide();
+                            PF('mttoContribDialog').hide();
                         }
                     }
                     
                     function handleContacto(xhr, status, args) {
                         if (args.validationFailed || !args.okContacto) {
-                            mttoContactosDialog.jq.effect("shake", {times: 5}, 100);
+                            PF('mttoContactosDialog').jq.effect("shake", {times: 5}, 100);
                         } else {
-                            mttoContactosDialog.hide();
+                            PF('mttoContactosDialog').hide();
                         }
                     }
                     
                     function handleTelefono(xhr, status, args) {
                         if (args.validationFailed || !args.okTelefono) {
-                            mttoTelefonosDialog.jq.effect("shake", {times: 5}, 100);
+                            PF('mttoTelefonosDialog').jq.effect("shake", {times: 5}, 100);
                         } else {
-                            mttoTelefonosDialog.hide();
+                            PF('mttoTelefonosDialog').hide();
                         }
                     }
                     
                     function handleTelefonoTipo(xhr, status, args) {
                         if (args.validationFailed || !args.okTelefonoTipo) {
-                            mttoTelefonosTiposDialog.jq.effect("shake", {times: 5}, 100);
+                            PF('mttoTelefonosTiposDialog').jq.effect("shake", {times: 5}, 100);
                         } else {
-                            mttoTelefonosTiposDialog.hide();
+                            PF('mttoTelefonosTiposDialog').hide();
                         }
                     }
                 </script>

@@ -2,6 +2,7 @@ package utilerias;
 
 import java.security.MessageDigest;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -11,8 +12,6 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.faces.application.FacesMessage;
-import javax.faces.validator.ValidatorException;
 
 /**
  *
@@ -102,6 +101,11 @@ public class Utilerias {
         formatoImporte = NumberFormat.getCurrencyInstance(new Locale("es", "MX"));
         String cantidad = formatoImporte.format(importe);
         return cantidad;
+    }
+    
+    public static String formatoNumero(String formato, double valor) {
+        DecimalFormat myFormatter = new DecimalFormat(formato);
+        return myFormatter.format(valor);
     }
 
     public String quitarComasNumero(String numero) {

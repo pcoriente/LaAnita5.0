@@ -102,7 +102,7 @@
                                                      process="@this" actionListener="#{mbSolicitudes.salir()}" update="main" />
                                     <p:commandButton id="btnBuscarEmpaques" icon="ui-icon-search" title="Buscar Productos" 
                                                      process="@this" actionListener="#{mbSolicitudes.mbBuscar.inicializar()}" 
-                                                     update="buscarProductos listaBuscarProductos" oncomplete="buscarProductoDlg.show()" />
+                                                     update="buscarProductos listaBuscarProductos" oncomplete="PF('buscarProductoDlg').show()" />
                                 </p:column>
                             </p:row>
                         </p:panelGrid>
@@ -184,7 +184,7 @@
                                 <p:commandButton id="seleccion" value="Seleccionar" 
                                                  disabled="#{mbSolicitudes.mbBuscar.producto==null}"
                                                  actionListener="#{mbSolicitudes.actualizaProductoSeleccionado()}"
-                                                 update=":main:detalleSolicitud" oncomplete="buscarProductoDlg.hide()" />
+                                                 update=":main:detalleSolicitud" oncomplete="PF('buscarProductoDlg').hide()" />
                             </f:facet>
                         </p:dataTable>
                     </p:dialog>
@@ -192,7 +192,7 @@
                 <script type="text/javascript">
                     function handleBuscar(xhr, status, args) {
                         if (!(args.validationFailed || !args.okBuscar)) {
-                            buscarProductoDlg.hide();
+                            PF('buscarProductoDlg').hide();
                         }
                     }
                 </script>

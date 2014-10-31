@@ -34,7 +34,7 @@
                                 <p:column >
                                     <p:commandButton id="btnBuscarSolicitudes" icon="ui-icon-search" title="Buscar Solicitudes" 
                                                      process="@this" actionListener="#{mbEnvios.obtenerSolicitudes()}" 
-                                                     update="listaSolicitudes" oncomplete="listaSolicitudesDlg.show()" />
+                                                     update="listaSolicitudes" oncomplete="PF('listaSolicitudesDlg').show()" />
                                 </p:column>
                             </p:row>
                             <p:row >
@@ -174,12 +174,12 @@
                 <script type="text/javascript">
                     function handleCerrarEditarLotes(xhr, status, args) {
                         if (!(args.validationFailed || !args.okLotes)) {
-                            editarLotesDlg.hide();
+                            PF('editarLotesDlg').hide();
                         }
                     }
                     function handleAbrirEditarLotes(xhr, status, args) {
                         if (!(args.validationFailed || !args.okLotes)) {
-                            editarLotesDlg.show();
+                            PF('editarLotesDlg').show();
                         }
                     }
                 </script>

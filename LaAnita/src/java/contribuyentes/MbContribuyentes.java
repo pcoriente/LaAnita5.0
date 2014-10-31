@@ -56,7 +56,7 @@ public class MbContribuyentes implements Serializable {
             String mensaje = utilerias.verificarRfc(this.contribuyente.getRfc());
             if (!mensaje.equals("")) {
                 fMsg.setDetail(mensaje);
-            } else if(this.contribuyente.getRfc().length()==12 || utilerias.validarCurp(this.contribuyente.getCurp())) {
+            } else if(this.contribuyente.getRfc().length()==12 || this.contribuyente.getCurp().equals("") || utilerias.validarCurp(this.contribuyente.getCurp())) {
                 ok=true;
             } else {
                 fMsg.setDetail("Error! Curp no valido");

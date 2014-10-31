@@ -2,8 +2,6 @@ package impuestos.dao;
 
 import impuestos.dominio.Impuesto;
 import impuestos.dominio.ImpuestoDetalle;
-import impuestos.dominio.ImpuestoGrupo;
-import impuestos.dominio.ImpuestoZona;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -12,6 +10,8 @@ import java.sql.Statement;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.context.ExternalContext;
@@ -31,6 +31,7 @@ import utilerias.Utilerias;
 public class DAOImpuestosDetalle {
 
     private DataSource ds;
+    Calendar cal = new GregorianCalendar();
 
     public DAOImpuestosDetalle() throws NamingException {
         try {
@@ -46,9 +47,25 @@ public class DAOImpuestosDetalle {
         }
     }
     
-    public ArrayList<ImpuestoDetalle> grabar(int idZona, int idGrupo, ImpuestoDetalle detalle, String periodo) throws SQLException {
-        ArrayList<ImpuestoDetalle> impuestos = new ArrayList<ImpuestoDetalle>();
+//    public ArrayList<ImpuestoDetalle> grabar(int idZona, int idGrupo, java.util.Date inicia, String periodo, ImpuestoDetalle detalle) throws SQLException {
+    public void grabar(int idZona, int idGrupo, java.util.Date inicia, String periodo, ImpuestoDetalle detalle) throws SQLException {
+//        String strDate;
+//        ArrayList<ImpuestoDetalle> impuestos = new ArrayList<ImpuestoDetalle>();
+//        
+        Date iniciaba=new java.sql.Date(inicia.getTime());
+//        try {
+//            strDate=Utilerias.date2String(detalle.getFechaInicial());
+//            detalle.setFechaInicial(Utilerias.string2Date(strDate));
+//            strDate=Utilerias.date2String(detalle.getFechaFinal());
+//            detalle.setFechaFinal(Utilerias.string2Date(strDate));
+//        } catch (Exception ex) {
+//            Logger.getLogger(DAOImpuestosDetalle.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+////        inicia=Utilerias.addDays(detalle.getFechaInicial(), 1);
+////        Date fechaInicial=new java.sql.Date(inicia.getTime());
         Date fechaInicial=new java.sql.Date(detalle.getFechaInicial().getTime());
+////        inicia=Utilerias.addDays(detalle.getFechaFinal(), 1);
+////        Date fechaFinal=new java.sql.Date(inicia.getTime());
         Date fechaFinal=new java.sql.Date(detalle.getFechaFinal().getTime());
         
         Connection cn = this.ds.getConnection();
@@ -57,24 +74,25 @@ public class DAOImpuestosDetalle {
             st.executeUpdate("begin Transaction");
             String strSQL="UPDATE impuestosDetalle "
                     + "SET fechaInicial='"+fechaInicial.toString()+"', fechaFinal='"+fechaFinal.toString()+"' "
-                    + "WHERE idZona="+idZona+" AND idGrupo="+idGrupo+" AND fechaInicial='"+fechaInicial.toString()+"'";
+                    + "WHERE idZona="+idZona+" AND idGrupo="+idGrupo+" AND fechaInicial='"+iniciaba.toString()+"'";
             st.executeUpdate(strSQL);
             strSQL="UPDATE impuestosDetalle "
                     + "SET valor="+detalle.getValor()+" "
                     + "WHERE idZona="+idZona+" AND idGrupo="+idGrupo+" AND idImpuesto="+detalle.getImpuesto().getIdImpuesto()+" AND fechaInicial='"+fechaInicial.toString()+"'";
             st.executeUpdate(strSQL);
-            ResultSet rs = st.executeQuery(sqlDetalles(idZona, idGrupo, periodo));
-            while (rs.next()) {
-                impuestos.add(construirDetalle(rs));
-            }
             st.executeUpdate("commit Transaction");
+//            
+//            ResultSet rs = st.executeQuery(sqlDetalles(idZona, idGrupo, periodo));
+//            while (rs.next()) {
+//                impuestos.add(construirDetalle(rs));
+//            }
         } catch(SQLException ex) {
             st.executeUpdate("rollback Transaction");
             throw(ex);
         } finally {
             cn.close();
         }
-        return impuestos;
+//        return impuestos;
     }
     
     public void eliminarPeriodo(int idZona, int idGrupo) throws SQLException {
@@ -150,9 +168,9 @@ public class DAOImpuestosDetalle {
     
     public ArrayList<ImpuestoDetalle> obtenerDetalles(int idZona, int idGrupo, String periodo) throws SQLException {
         ArrayList<ImpuestoDetalle> impuestos = new ArrayList<ImpuestoDetalle>();
-        if(idZona==0 || idGrupo==0) {
-            return impuestos;
-        }
+//        if(idZona==0 || idGrupo==0) {
+//            return impuestos;
+//        }
         Connection cn = ds.getConnection();
         Statement st = cn.createStatement();
         try {
@@ -169,8 +187,8 @@ public class DAOImpuestosDetalle {
     private ImpuestoDetalle construirDetalle(ResultSet rs) throws SQLException {
         ImpuestoDetalle imp=new ImpuestoDetalle();
         imp.setImpuesto(new Impuesto(rs.getInt("idImpuesto"), rs.getString("impuesto"), rs.getBoolean("aplicable"), rs.getInt("modo"), rs.getBoolean("acreditable"), rs.getBoolean("acumulable")));
-        imp.setFechaInicial(new java.util.Date(rs.getDate("fechaInicial").getTime()));
-        imp.setFechaFinal(new java.util.Date(rs.getDate("fechaFinal").getTime()));
+        imp.setFechaInicial(new java.util.Date(rs.getDate("fechaInicial", cal).getTime()));
+        imp.setFechaFinal(new java.util.Date(rs.getDate("fechaFinal", cal).getTime()));
         imp.setValor(rs.getDouble("valor"));
         return imp;
     }
