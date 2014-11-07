@@ -84,14 +84,21 @@ public class DAOPartes {
         return partes;
     }
     
-    public void eliminar(int idParte) throws SQLException {
+    public void eliminar(int idParte, int idProducto) throws SQLException {
         Connection cn=ds.getConnection();
         Statement st=cn.createStatement();
         try {
             st.executeUpdate("BEGIN TRANSACTION");
+//            ResultSet rs=st.executeQuery("SELECT producto FROM productos WHERE idParte="+idParte+" AND idProducto!="+idProducto);
             ResultSet rs=st.executeQuery("SELECT idProducto FROM productos WHERE idParte="+idParte);
-            if(rs.next()) {
-                throw new SQLException("No se puede eliminar, esta en otro producto !");
+            boolean ban=false;
+            String msg="No se puede eliminar, esta en otro(s) producto(s) !";
+            while(rs.next()) {
+                ban=true;
+                msg+="\n "+rs.getString("idProducto");
+            }
+            if(ban) {
+                throw new SQLException(msg);
             }
             st.executeUpdate("DELETE FROM productosPartes WHERE idParte="+idParte);
             st.executeUpdate("COMMIT TRANSACTION");

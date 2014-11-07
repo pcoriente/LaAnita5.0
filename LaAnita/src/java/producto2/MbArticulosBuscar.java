@@ -5,6 +5,8 @@ import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.context.FacesContext;
@@ -15,6 +17,7 @@ import producto2.dao.DAOArticulosBuscar;
 import producto2.dominio.Articulo;
 import producto2.dominio.ArticuloBuscar;
 import producto2.dominio.Grupo;
+import producto2.dominio.Parte;
 import producto2.dominio.SubGrupo;
 import producto2.dominio.Tipo;
 
@@ -95,12 +98,16 @@ public class MbArticulosBuscar implements Serializable {
             if(this.tipoBuscar.equals("1")) {
                 this.strBuscar="1";
             } else {
+                this.articulo=null;
                 this.articulos=new ArrayList<ArticuloBuscar>();
                 ArrayList<Tipo> lstTipos = new ArrayList<Tipo>();
                 ArrayList<Grupo> lstGrupos = new ArrayList<Grupo>();
                 ArrayList<SubGrupo> lstSubGrupos = new ArrayList<SubGrupo>();
                 ArrayList<Articulo> lstArticulos;
                 if(this.tipoBuscar.equals("2")) {
+                    if(this.mbParte.getParte()==null) {
+                        this.mbParte.setParte(new Parte());
+                    }
 //                    lstArticulos=this.dao.obtenerArticulos(this.mbParte.getParte().getIdParte());
                     lstArticulos=this.dao.obtenerArticulos(this.mbParte.getParte());
                 } else {
@@ -118,24 +125,43 @@ public class MbArticulosBuscar implements Serializable {
                     }
                     this.articulos.add(new ArticuloBuscar(a.getIdArticulo(),a.getTipo().getTipo(), a.getGrupo().getGrupo(), a.getSubGrupo().getSubGrupo(), a.toString()));
                 }
+                Collections.sort(lstTipos, new Comparator<Tipo>() {
+                    @Override
+                    public int compare(Tipo  tipo1, Tipo  tipo2) {
+                        return  tipo1.getTipo().compareTo(tipo2.getTipo());
+                    }
+                });
                 int i = 0;
                 this.arrayTipos = new SelectItem[lstTipos.size() + 1];
                 this.arrayTipos[i++] = new SelectItem("", "Seleccione un tipo");
                 for (Tipo t : lstTipos) {
                     this.arrayTipos[i++] = new SelectItem(t.getTipo(), t.getTipo());
                 }
+                Collections.sort(lstGrupos, new Comparator<Grupo>() {
+                    @Override
+                    public int compare(Grupo  grupo1, Grupo  grupo2) {
+                        return  grupo1.getGrupo().compareTo(grupo2.getGrupo());
+                    }
+                });
                 i = 0;
                 this.arrayGrupos = new SelectItem[lstGrupos.size() + 1];
                 this.arrayGrupos[i++] = new SelectItem("", "Seleccione un grupo");
                 for (Grupo g : lstGrupos) {
                     this.arrayGrupos[i++] = new SelectItem(g.getGrupo(), g.getGrupo());
                 }
+                Collections.sort(lstSubGrupos, new Comparator<SubGrupo>() {
+                    @Override
+                    public int compare(SubGrupo  subGrupo1, SubGrupo  subGrupo2) {
+                        return  subGrupo1.getSubGrupo().compareTo(subGrupo2.getSubGrupo());
+                    }
+                });
                 i = 0;
                 this.arraySubGrupos = new SelectItem[lstSubGrupos.size() + 1];
                 this.arraySubGrupos[i++] = new SelectItem("", "Seleccione un subGrupo");
                 for (SubGrupo sg : lstSubGrupos) {
                     this.arraySubGrupos[i++] = new SelectItem(sg.getSubGrupo(), sg.getSubGrupo());
                 }
+                this.filtrados=this.articulos;
                 if(this.articulos.isEmpty()) {
                     fMsg.setSeverity(FacesMessage.SEVERITY_INFO);
                     fMsg.setDetail("No se encontraron productos en la busqueda");

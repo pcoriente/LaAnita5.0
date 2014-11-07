@@ -213,6 +213,9 @@ public class MbArticulos implements Serializable {
         try {
             this.dao=new DAOArticulos();
             this.dao.eliminar(this.articulo.getIdArticulo());
+            this.articulo=new Articulo();
+            fMsg.setSeverity(FacesMessage.SEVERITY_INFO);
+            fMsg.setDetail("El producto se ha eliminado !!!");
             ok=true;
         } catch (NamingException ex) {
             fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
@@ -221,15 +224,15 @@ public class MbArticulos implements Serializable {
             fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
             fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
         }
-        if(!ok) {
+//        if(!ok) {
             FacesContext.getCurrentInstance().addMessage(null, fMsg);
-        }
+//        }
     }
 
     public void grabar() {
         boolean ok = false;
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
-        this.articulo.setContenido(Utilerias.Round(this.articulo.getContenido(), 3));
+//        this.articulo.setContenido(Utilerias.Round(this.articulo.getContenido(), 4));
         if (this.articulo.getParte().getIdParte() == 0) {
             fMsg.setDetail("Se requiere una parte !!");
         } else if (this.articulo.getTipo().getIdTipo() == 0) {
@@ -253,6 +256,8 @@ public class MbArticulos implements Serializable {
                 } else {
                     this.dao.modificar(this.convertir(this.articulo));
                 }
+                fMsg.setSeverity(FacesMessage.SEVERITY_INFO);
+                fMsg.setDetail("El producto se grabo correctamente !!!");
                 ok=true;
             } catch (NamingException ex) {
                 fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
@@ -262,9 +267,9 @@ public class MbArticulos implements Serializable {
                 fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
             }
         }
-        if (!ok) {
+//        if (!ok) {
             FacesContext.getCurrentInstance().addMessage(null, fMsg);
-        }
+//        }
 //        return ok;
     }
     

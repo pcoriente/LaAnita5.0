@@ -52,14 +52,14 @@ public class MbParte implements Serializable {
         return partes;
     }
     
-    public boolean eliminar() {
+    public boolean eliminar(int idProducto) {
         boolean ok=false;
         RequestContext context = RequestContext.getCurrentInstance();
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "eliminar: mbParte");
         try {
             if(this.parte.getIdParte()!=0) {
                 this.dao=new DAOPartes();
-                this.dao.eliminar(this.parte.getIdParte());
+                this.dao.eliminar(this.parte.getIdParte(), idProducto);
             }
             this.parte=new Parte();
             ok=true;

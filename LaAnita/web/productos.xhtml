@@ -152,11 +152,11 @@
                                     <h:outputLabel for="contenido" value="CONTENIDO :" style="font-weight: bold; color: black; width: 120px;" />
                                 </p:column>
                                 <p:column colspan="3">
-                                    <p:inputText id="contenido" immediate="true" maxlength="7" size="10"
+                                    <p:inputText id="contenido" immediate="true"  maxlength="11"
                                                  required="true" requiredMessage="Se requiere un número"
                                                  disabled="#{frmProductos.mbArticulos.articulo.presentacion.idPresentacion==0}"
                                                  value="#{frmProductos.mbArticulos.articulo.contenido}" >
-                                        <f:convertNumber maxIntegerDigits="6" maxFractionDigits="3" pattern="#####0.###" />
+                                        <f:convertNumber pattern="#####0.####" />
                                     </p:inputText>
                                 </p:column>
                             </p:row>
@@ -204,7 +204,7 @@
                     <p:confirmDialog message="Esta seguro de eliminar el producto ?" header="Eliminar un producto" widgetVar="eProducto" >
                         <p:commandButton value="No, cancelar" onclick="PF('eProducto').hide();" type="button" />
                         <p:commandButton value="Si, seguro" actionListener="#{frmProductos.eliminar()}" 
-                                         update="messages2 mttoProductos" oncomplete="PF('eProducto').hide();"/>
+                                         update="messages2 mttoProductos verProductos" oncomplete="PF('eProducto').hide();"/>
                     </p:confirmDialog>
                     <p:dialog header="LISTA DE PRODUCTOS" widgetVar="verProductosDlg" resizable="false" style="width: 600px;" modal="true" >
                         <p:dataTable id="verProductos" value="#{frmProductos.mbBuscar.productos}" 
@@ -373,13 +373,14 @@
                                                      update=":main:combo" oncomplete="handleBuscar(xhr, status, args)" />
                                 </p:column>
                                 <p:column rendered="#{frmProductos.mbCombo.mbBuscar.tipoBuscar=='2'}" >
-                                    <p:autoComplete id="opcionParte" value="#{frmProductos.mbCombo.mbBuscar.mbParte.parte}" maxlength="24" size="24"
-                                                    completeMethod="#{frmProductos.mbCombo.mbBuscar.mbParte.completePartes}"
+                                    <p:autoComplete id="opcionParte" value="#{frmProductos.mbCombo.mbBuscar.mbParte.parte}" maxlength="35"
+                                                    completeMethod="#{frmProductos.mbCombo.mbBuscar.mbParte.completePartes}" 
                                                     var="p" itemLabel="#{p.parte}" itemValue="#{p}" converter="converters.Parte" 
-                                                    forceSelection="true" />
+                                                    minQueryLength="3" queryDelay="1000" scrollHeight="100" forceSelection="true" >
+                                    </p:autoComplete>
                                     <p:commandButton id="btnBuscarLista" icon="ui-icon-check" title="Buscar" 
-                                                     process="@this opcionParte" actionListener="#{frmProductos.mbCombo.buscar()}" 
-                                                     update="multipleSelectProductos"  />
+                                                     process="@this opcionParte" actionListener="#{frmProductos.mbCombo.buscar()}"
+                                                     update="multipleSelectProductos msgBuscar"  />
                                 </p:column>
                                 <p:column rendered="#{frmProductos.mbCombo.mbBuscar.tipoBuscar=='3'}" >
                                     <p:inputText id="opcionDescripcion" value="#{frmProductos.mbCombo.mbBuscar.strBuscar}" maxlength="24" size="24" />
@@ -627,11 +628,11 @@
                                                 update="buscarArticulos listaArticulos" />
                                     </p:selectOneRadio>
                                 </p:column>
-                                <p:column rendered="#{frmProductos.mbArticulos.mbBuscar.tipoBuscar=='2'}" >
-                                    <p:autoComplete id="opcionParte1" value="#{frmProductos.mbArticulos.mbBuscar.mbParte.parte}" size="24" maxlength="24"
+                                <p:column rendered="#{frmProductos.mbArticulos.mbBuscar.tipoBuscar=='2'}" style="width: 450px;" >
+                                    <p:autoComplete id="opcionParte1" value="#{frmProductos.mbArticulos.mbBuscar.mbParte.parte}" size="50" maxlength="24" 
                                                     completeMethod="#{frmProductos.mbArticulos.mbBuscar.mbParte.completePartes}" 
                                                     var="p" itemLabel="#{p.parte}" itemValue="#{p}" converter="converters.Parte" 
-                                                    forceSelection="true" />
+                                                    forceSelection="true" scrollHeight="150" />
                                     <p:commandButton id="btnBuscarLista1" icon="ui-icon-check" title="Buscar" 
                                                      process="@this opcionParte1" actionListener="#{frmProductos.mbArticulos.buscar()}" 
                                                      update="listaArticulos" />
