@@ -446,7 +446,7 @@ public class MbOrdenCompra implements Serializable {
                     String servidorCorreos = "mail.laanita.com";
                     String user = "carlos.pat";
                     String remitente = "carlos.pat@laanita.com";
-                    String passRemitente = "Usuario1";
+                    String passRemitente = "Mildred1";
                     int puerto = 587;
                     String protocolo = "smtp";
                     Properties props = new Properties();
