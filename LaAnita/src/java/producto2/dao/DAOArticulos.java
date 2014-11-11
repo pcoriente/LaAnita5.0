@@ -43,7 +43,9 @@ public class DAOArticulos {
             st.execute("BEGIN TRANSACTION");
             ResultSet rs=st.executeQuery("SELECT COUNT(*) AS total FROM empaques WHERE idProducto="+idArticulo);
             if(rs.next()) {
-                throw new SQLException("El articulo esta contenido en varios empaques, no se puede eliminar");
+                if(rs.getInt("total")!=0) {
+                    throw new SQLException("El articulo esta contenido en varios empaques, no se puede eliminar");
+                }
             }
             st.executeUpdate("DELETE FROM productos WHERE idProducto="+idArticulo);
             st.execute("COMMIT TRANSACTION");

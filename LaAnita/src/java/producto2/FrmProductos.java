@@ -78,7 +78,7 @@ public class FrmProductos implements Serializable {
     
     public void eliminarParte() {
         this.mbArticulos.getMbParte().setParte(this.mbArticulos.getArticulo().getParte());
-        if(this.mbArticulos.getMbParte().eliminar()) {
+        if(this.mbArticulos.getMbParte().eliminar(this.mbArticulos.getArticulo().getIdArticulo())) {
             this.mbArticulos.getArticulo().setParte(this.mbArticulos.getMbParte().getParte());
         }
     }
@@ -173,6 +173,7 @@ public class FrmProductos implements Serializable {
         try {
             this.dao=new DAOProductos();
             this.dao.eliminar(this.producto.getIdProducto());
+            this.mbBuscar.getProductos().remove(this.producto);
             this.producto.setIdProducto(0);
             this.producto.setCod_pro("");
             this.producto.setEmpaque(new Empaque());

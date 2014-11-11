@@ -105,6 +105,9 @@ public class DAOArticulosBuscar {
             while(rs.next()) {
                 articulos.add(construir(rs));
             }
+        } catch (SQLException ex) {
+            System.out.println(strSQL);
+            throw ex;
         } finally {
             cn.close();
         }
@@ -161,9 +164,10 @@ public class DAOArticulosBuscar {
     
     private String sqlArticulo() {
         String strSQL=""
-                + "SELECT a.idProducto, pa.idParte, pa.parte, a.descripcion, t.idTipo, t.tipo,"
-                + "     isnull(sg.idSubGrupo, 0) as idSubGrupo, isnull(sg.subGrupo, '') as subGrupo, "
+                + "SELECT a.idProducto, pa.idParte, pa.parte, a.descripcion, "
+                + "     isnull(t.idTipo, 0) as idTipo, isnull(t.tipo, '') as tipo,"
                 + "     isnull(g.idGrupo, 0) as idGrupo, isnull(g.codigoGrupo, 0) as codigoGrupo, isnull(g.grupo, '') as grupo, "
+                + "     isnull(sg.idSubGrupo, 0) as idSubGrupo, isnull(sg.subGrupo, '') as subGrupo, "
                 + "     isnull(m.idMarca, 0) as idMarca, isnull(m.marca, '') as marca, "
                 + "     COALESCE(u.idPresentacion, 0) AS idPresentacion, COALESCE(u.presentacion, '') AS presentacion, COALESCE(u.abreviatura, '') AS abreviatura, a.contenido,"
                 + "     COALESCE(um.idUnidadMedida, 0) AS idUnidadMedida, COALESCE(um.unidadMedida, '') as unidadMedida, COALESCE(um.abreviatura, '') as medAbrev, 0 as idTipoUnidadMedida,"
