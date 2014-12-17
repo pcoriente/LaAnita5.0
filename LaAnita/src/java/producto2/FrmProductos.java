@@ -47,6 +47,17 @@ public class FrmProductos implements Serializable {
         this.inicializaLocales();
     }
     
+    public void onIdle() {
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, 
+                                        "No activity.", "What are you doing over there?"));
+    }
+ 
+    public void onActive() {
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
+                                        "Welcome Back", "Well, that's a long coffee break!"));
+    }
+
+    
     public void inicializar() {
         this.mbArticulos.inicializar();
         this.mbEmpaques.inicializar();

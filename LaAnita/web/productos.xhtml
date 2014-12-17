@@ -28,8 +28,8 @@
                                                          oncomplete="PF('buscarArticulosDlg').show();" />
                                         <!--id="btnVerProductos" -->
                                         <p:commandButton icon="ui-icon-star" title="Ver lista Empaques"
-                                                     process="@this" actionListener="#{frmProductos.obtenerProductos()}"
-                                                     update="verProductos messages" oncomplete="PF('verProductosDlg').show();" />
+                                                         process="@this" actionListener="#{frmProductos.obtenerProductos()}"
+                                                         update="verProductos messages" oncomplete="PF('verProductosDlg').show();" />
                                         <p:commandButton icon="ui-icon-home" title="Terminar" 
                                                          action="#{frmProductos.terminar()}" ajax="false" immediate="true" />
                                     </p:column>
@@ -224,8 +224,8 @@
                             </p:column >
                             <f:facet name="footer" >
                                 <p:commandButton icon="ui-icon-document" title="Nuevo Empaque" 
-                                                process="@this" actionListener="#{frmProductos.nuevoProducto()}" 
-                                                update=":main:mttoProductos" oncomplete="PF('mttoProductosDlg').show();" />
+                                                 process="@this" actionListener="#{frmProductos.nuevoProducto()}" 
+                                                 update=":main:mttoProductos" oncomplete="PF('mttoProductosDlg').show();" />
                                 <p:commandButton id="btnSelProducto" icon="ui-icon-pencil" title="Seleccionar" 
                                                  disabled="#{frmProductos.mbBuscar.producto==null}" 
                                                  process="@this" actionListener="#{frmProductos.actualizaProductoSeleccionado()}" 
@@ -511,7 +511,7 @@
                                     <p:inputText id="sku" value="#{frmProductos.producto.cod_pro}" maxlength="7" size="10" style="width: 100px;" />
                                 </p:column>
                                 <p:column style="width: 60px;" >
-                                    
+
                                 </p:column>
                                 <p:column >
                                     <h:outputLabel for="upc" value="UPC :" style="font-weight: bold; color: black; width: 40px; text-align: right;" />
@@ -660,7 +660,7 @@
                             <f:facet name="header">
                                 Seleccione un articulo  
                             </f:facet>
-                            
+
                             <p:column filterBy="#{art.tipo}" headerText="Tipo Inventario" filterMatchMode="exact">
                                 <f:facet name="filter">
                                     <p:selectOneMenu id="idListaTipos" onchange="PF('listaArticulos').filter();" 
@@ -672,7 +672,7 @@
                                 </f:facet>
                                 <h:outputText value="#{art.tipo}" />
                             </p:column>
-                            
+
                             <p:column filterBy="#{art.grupo}" headerText="Grupos" filterMatchMode="exact">
                                 <f:facet name="filter">
                                     <p:selectOneMenu id="idListaGrupos" onchange="PF('listaArticulos').filter();" 
@@ -684,7 +684,7 @@
                                 </f:facet>
                                 <h:outputText value="#{art.grupo}" />
                             </p:column>
-                            
+
                             <p:column filterBy="#{art.subGrupo}" headerText="SubGrupos" filterMatchMode="exact">
                                 <f:facet name="filter">
                                     <p:selectOneMenu id="idListaSubGrupos" onchange="PF('listaArticulos').filter();" 
@@ -698,7 +698,7 @@
                             <p:column headerText="Articulo" >
                                 <h:outputText value="#{art.articulo}" />
                             </p:column>
-                            
+
                             <f:facet name="footer">
                                 <p:commandButton id="btnSelArticulo" value="Seleccionar" 
                                                  disabled="#{frmProductos.mbArticulos.mbBuscar.articulo==null}"
@@ -897,6 +897,41 @@
                             PF('mttoGruposDlg').hide();
                         }
                     }
+                    /*
+                    var TIME = 10; // in seconds
+                    var countTimer = TIME;
+                    var processTimer;
+                    var timer_is_on = 0;
+                    
+                    function startIdleMonitor() {
+                        countTimer = TIME;
+                        document.getElementById('minuteOutput').innerHTML = countTimer;
+                        PF('timeoutDialog').show();
+                    }
+                    function timedCount() {
+                        document.getElementById('minuteOutput').innerHTML = countTimer;
+                        if (countTimer === 0) {
+                            timer_is_on = 0;
+                            window.location.href = 'login.xhtml';
+                            return;
+                        }
+                        countTimer = countTimer - 1;
+                        processTimer = setTimeout("timedCount()", 1000);
+                    }
+                    function doTimer() {
+                        if (!timer_is_on) {
+                            timer_is_on = 1;
+                            timedCount();
+                        }
+                    }
+                    function stopCount() {
+                        clearTimeout(processTimer);
+                        timer_is_on = 0;
+                    }
+                    function exit() {
+                        document.location.href = 'login.xhtml';
+                    }
+                    */
                 </script>
             </div>
         </div>
