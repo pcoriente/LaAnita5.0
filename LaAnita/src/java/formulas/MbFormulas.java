@@ -1,6 +1,7 @@
 package formulas;
 
 import empresas.MbMiniEmpresas;
+import empresas.dominio.MiniEmpresa;
 import formulas.dominio.Formula;
 import formulas.dominio.Insumo;
 import formulas.dao.DAOFormulas;
@@ -16,6 +17,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.context.FacesContext;
 import javax.naming.NamingException;
+import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import producto2.MbProductosBuscar;
 import producto2.dominio.Producto;
@@ -54,12 +56,15 @@ public class MbFormulas implements Serializable {
         this.mbBuscar = new MbProductosBuscar();
     }
     
-    public void validaCantidad() {
-        this.formula.setSumaCantidad(this.formula.getSumaCantidad()-this.respInsumo.getCantidad()+this.insumo.getCantidad());
-        this.formula.setSumaCosto(this.formula.getSumaCosto()-this.respInsumo.getCostoPromedio()+this.insumo.getCostoPromedio());
-    }
+//    public void validaCantidad() {
+//        this.formula.setSumaCantidad(this.formula.getSumaCantidad()-this.respInsumo.getCantidad()+this.insumo.getCantidad());
+//        this.formula.setSumaCosto(this.formula.getSumaCosto()-this.respInsumo.getCostoPromedio()+this.insumo.getCostoPromedio());
+//    }
     
     public String salir() {
+        this.mbEmpresas.setEmpresa(new MiniEmpresa());
+        this.mbEmpresas.setListaEmpresas(null);
+        this.formula=new Formula();
         return "index.xhtml";
     }
     
@@ -92,11 +97,12 @@ public class MbFormulas implements Serializable {
     }
     
     public void convertirFormula(Producto producto, TOFormula toFormula) throws SQLException {
-        this.formula.setIdFormula(toFormula.getIdFormula());
-        this.formula.setIdEmpresa(toFormula.getIdEmpresa());
-        this.formula.setIdEmpaque(toFormula.getIdEmpaque());
+        this.formula=new Formula();
+        this.formula.setIdEmpresa(this.mbEmpresas.getEmpresa().getIdEmpresa());
+        this.formula.setIdEmpaque(producto.getIdProducto());
         this.formula.setCod_pro(producto.getCod_pro());
         this.formula.setEmpaque(producto.toString());
+        this.formula.setIdFormula(toFormula.getIdFormula());
         this.formula.setCostoPromedio(toFormula.getCostoPromedio());
         this.formula.setMerma(toFormula.getMerma());
         this.formula.setObservaciones(toFormula.getObservaciones());
@@ -110,11 +116,11 @@ public class MbFormulas implements Serializable {
     }
     
     public String getTotalSumaCostoPromedio() {
-        return new DecimalFormat("###,###.######").format(this.formula.getSumaCosto());
+        return new DecimalFormat("###,##0.000000").format(this.formula.getSumaCosto());
     }
     
     public String getTotalSumaCantidad() {
-        return new DecimalFormat("###,###.######").format(this.formula.getSumaCantidad());
+        return new DecimalFormat("###,##0.000000").format(this.formula.getSumaCantidad());
     }
     
     public void validaProductoSeleccionado() {
@@ -136,9 +142,10 @@ public class MbFormulas implements Serializable {
             try {
                 this.dao = new DAOFormulas();
                 producto.setCostoPromedio(this.dao.agregarInsumo(this.formula.getIdFormula(), this.formula.getIdEmpresa(), this.convertTOInsumo(producto)));
-                producto.setNuevo(false);
-                this.formula.getInsumos().add(producto);
                 this.insumo = producto;
+                this.insumo.setNuevo(false);
+                this.formula.setSumaCosto(this.formula.getSumaCosto()+this.insumo.getCostoPromedio());
+                this.formula.getInsumos().add(this.insumo);
                 ok = true;
             } catch (SQLException ex) {
                 fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
@@ -159,9 +166,9 @@ public class MbFormulas implements Serializable {
         try {
             this.dao=new DAOFormulas();
             if(this.caso==1) {
-                convertirFormula(this.mbBuscar.getProducto(), this.dao.obtenerFormula(this.mbBuscar.getProducto().getIdProducto()));
+                this.convertirFormula(this.mbBuscar.getProducto(), this.dao.obtenerFormula(this.mbEmpresas.getEmpresa().getIdEmpresa(), this.mbBuscar.getProducto().getIdProducto()));
             } else {
-                validaProductoSeleccionado();
+                this.validaProductoSeleccionado();
             }
             ok=true;
         } catch (SQLException ex) {
@@ -183,13 +190,13 @@ public class MbFormulas implements Serializable {
     
     public void buscarEmpaqueInsumo() {
         this.caso=2;
-        this.update=":main:mttoFormulas :main:formulaInsumos :main:mttoFormulasTotales";
+        this.update=":main:mttoFormulas :main:formulaInsumos :main:mttoFormulasTotales :main:messages";
         this.mbBuscar.inicializar();
     }
     
     public void buscarEmpaqueFormula() {
         this.caso=1;
-        this.update=":main:mttoFormulas :main:formulaInsumos :main:mttoFormulasTotales";
+        this.update=":main:mttoFormulasDatos :main:mttoFormulas :main:formulaInsumos :main:mttoFormulasTotales :main:btnGrabarFormula :main:messages";
         this.mbBuscar.inicializar();
     }
     
@@ -204,7 +211,8 @@ public class MbFormulas implements Serializable {
     
     public void eliminarInsumo() {
         boolean ok=false;
-        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "grabarInsumo");
+        RequestContext context = RequestContext.getCurrentInstance();
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "eliminarInsumo");
         try {
             this.dao=new DAOFormulas();
             this.dao.eliminarInsumo(this.formula.getIdFormula(), this.insumo.getIdEmpaque());
@@ -220,6 +228,7 @@ public class MbFormulas implements Serializable {
         if (!ok) {
             FacesContext.getCurrentInstance().addMessage(null, fMsg);
         }
+        context.addCallbackParam("okInsumo", ok);
     }
     
     public void cancelarInsumo() {
@@ -227,27 +236,37 @@ public class MbFormulas implements Serializable {
         this.insumo.setVariacion(this.respInsumo.getVariacion());
     }
     
+    private double calculaCostoPromedio() {
+        double nuevoCosto=0.00;
+        for(Insumo prod: this.formula.getInsumos()) {
+            nuevoCosto+=prod.getCantidad()*prod.getCostoPromedio();
+        }
+        return nuevoCosto;
+    }
+    
     public void grabarInsumo() {
-        boolean ok=false;
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "grabarInsumo");
         try {
             this.dao=new DAOFormulas();
             if(this.insumo.isNuevo()) {
-                this.dao.agregarInsumo(this.formula.getIdFormula(), this.formula.getIdEmpresa(), convertTOInsumo(this.insumo));
+                this.insumo.setCostoPromedio(this.dao.agregarInsumo(this.formula.getIdFormula(), this.formula.getIdEmpresa(), convertTOInsumo(this.insumo)));
+                this.insumo.setNuevo(false);
+                this.respInsumo.setCostoPromedio(0);
             } else {
                 this.dao.modificarInsumo(this.formula.getIdFormula(), convertTOInsumo(this.insumo));
+                this.formula.setSumaCantidad(this.formula.getSumaCantidad()-this.respInsumo.getCantidad()+this.insumo.getCantidad());
             }
-            this.validaCantidad();
+            this.formula.setSumaCosto(this.formula.getSumaCosto()-this.respInsumo.getCostoPromedio()+this.insumo.getCostoPromedio());
             this.respaldaInsumo();
-            ok=true;
+            this.formula.setCostoPromedio(this.calculaCostoPromedio());
+            this.dao.modificarFormula(this.convertTOFormula(this.formula));
+            fMsg.setDetail("La modificacion se realizo correctamente !!!");
         } catch (SQLException ex) {
             fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
         } catch (NamingException ex) {
             fMsg.setDetail(ex.getMessage());
         }
-        if (!ok) {
-            FacesContext.getCurrentInstance().addMessage(null, fMsg);
-        }
+        FacesContext.getCurrentInstance().addMessage(null, fMsg);
     }
     
     private TOFormula convertTOFormula(Formula formula) {

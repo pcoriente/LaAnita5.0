@@ -19,49 +19,57 @@
                 <h:form id="main" onkeypress="return event.keyCode !== 13;">
                     <p:panel id="panelCapturaFormulas" header="Mantenimiento de Formulas" style="float: left" >
                         <p:messages id="messages" showDetail="true" closable="true" />
-                        <p:panelGrid id="mttoFormulas" >
+                        <p:panelGrid id="mttoFormulasDatos" >
                             <p:row >
                                 <p:column style="width: 80px;" >
                                     <h:outputLabel for="empresa" value="EMPRESA :" style="font-weight: bold; color: black;" />
                                 </p:column>
-                                <p:column colspan="6" >
+                                <p:column style="width: 605px;" >
                                     <p:selectOneMenu id="empresa" value="#{mbFormulas.mbEmpresas.empresa}" style="width: 200px;" >
                                         <f:converter converterId="converters.MiniEmpresa" />
                                         <f:selectItems value="#{mbFormulas.mbEmpresas.listaEmpresas}" />
-                                        <p:ajax event="change" update="btnGrabarFormula btnBuscarEmpaques" />
+                                        <p:ajax event="change" update="btnBuscarEmpaques" />
                                     </p:selectOneMenu>
+                                </p:column>
+                                <p:column style="text-align: right; width: 85px;" >
+                                    <p:commandButton icon="ui-icon-home" title="Terminar"
+                                                     ajax="false" action="#{mbFormulas.salir()}" immediate="true" />
                                 </p:column>
                             </p:row>
                             <p:row >
                                 <p:column >
                                     <h:outputLabel value="EMPAQUE :" style="font-weight: bold; color: black;" />
                                 </p:column>
-                                <p:column colspan="5" >
+                                <p:column >
                                     <p:inputText id="codigo" value="#{mbFormulas.formula.cod_pro}" style="width: 65px;" readonly="true" />
                                     <p:inputText id="empaque" value="#{mbFormulas.formula.empaque}" style="width: 520px;" readonly="true" />
                                 </p:column>
-                                <p:column style="text-align: left; width: 100px;" >
+                                <p:column style="text-align: left;" >
                                     <p:commandButton id="btnBuscarEmpaques" icon="ui-icon-search" title="Buscar Productos" 
+                                                     disabled="#{mbFormulas.mbEmpresas.empresa.idEmpresa==0}"
                                                      process="@this" actionListener="#{mbFormulas.buscarEmpaqueFormula()}" 
                                                      update="buscarProductos listaBuscarProductos" oncomplete="PF('buscarProductoDlg').show()" />
                                 </p:column>
                             </p:row>
+                        </p:panelGrid>
+                        <p:panelGrid id="mttoFormulas" >
                             <p:row >
-                                <p:column >
+                                <p:column style="width: 80px;" >
                                     <h:outputLabel for="txtMerma" value="MERMA :" style="font-weight: bold; color: black;" />
                                 </p:column>
                                 <p:column style="width: 110px;" >
-                                    <pe:inputNumber id="txtMerma" value="#{mbFormulas.formula.merma}" style="width: 100px;"
+                                    <pe:inputNumber id="txtMerma" value="#{mbFormulas.formula.merma}" style="width: 100px;" 
+                                                    disabled="#{mbFormulas.formula.idFormula==0}"
                                                     decimalPlaces="6" minValue="0" maxlength="13" emptyValue="zero" >
                                         <p:ajax event="change" process="@this" />
                                     </pe:inputNumber>
                                 </p:column>
-                                <p:column style="width: 140px; text-align: left;" >
-                                    <h:outputLabel value="COSTO PROMEDIO :" style="font-weight: bold; color: black;" />
+                                <p:column style="width: 140px; text-align: right;" >
+                                    <h:outputLabel value="COSTO FORMULA :" style="font-weight: bold; color: black;" />
                                 </p:column>
                                 <p:column style="width: 110px;" >
                                     <p:inputText value="#{mbFormulas.formula.costoPromedio}" style="width: 100px;" readonly="true" >
-                                        <f:convertNumber pattern="###,##0.######" />
+                                        <f:convertNumber pattern="###,##0.000000" />
                                     </p:inputText>
                                 </p:column>
                                 <p:column style="text-align: right; width: 130px;" >
@@ -69,14 +77,13 @@
                                 </p:column>
                                 <p:column style="text-align: left; width: 30px;" >
                                     <p:commandButton id="btnMttoObservaciones" icon="ui-icon-pencil" title="Editar Observaciones" 
+                                                     disabled="#{mbFormulas.formula.idFormula==0}" 
                                                      process="@this" update="mttoObservaciones" oncomplete="PF('mttoObservacionesDlg').show()" />
                                 </p:column>
-                                <p:column style="text-align: right;" >
+                                <p:column style="text-align: left; width: 85px;" >
                                     <p:commandButton id="btnGrabarFormula" icon="ui-icon-disk" title="Grabar"
-                                                     disabled="#{mbFormulas.mbEmpresas.empresa.idEmpresa==0}"
+                                                     disabled="#{mbFormulas.formula.idFormula==0}"
                                                      actionListener="#{mbFormulas.grabarFormula()}" update="messages" />
-                                    <p:commandButton icon="ui-icon-arrowreturnthick-1-w" title="Terminar"
-                                                     ajax="false" action="#{mbFormulas.salir()}" immediate="true" />
                                 </p:column>
                             </p:row>
                         </p:panelGrid>
@@ -130,8 +137,8 @@
                                     <p:column colspan="4" style="text-align: right;" >
                                         <p:commandButton id="btnAgregarInsumo" icon="ui-icon-document" title="Agregar Insumo" 
                                                          disabled="#{mbFormulas.formula.idFormula==0}"
-                                                     process="@this" actionListener="#{mbFormulas.buscarEmpaqueInsumo()}" 
-                                                     update="buscarProductos listaBuscarProductos" oncomplete="PF('buscarProductoDlg').show()" />
+                                                         process="@this" actionListener="#{mbFormulas.buscarEmpaqueInsumo()}" 
+                                                         update="buscarProductos listaBuscarProductos" oncomplete="PF('buscarProductoDlg').show()" />
                                     </p:column>
                                 </p:row>
                             </f:facet>
@@ -183,15 +190,15 @@
                                     <p:column colspan="2" style="text-align: right;" >
                                         <p:commandButton icon="ui-icon-disk" title="Grabar"
                                                          actionListener="#{mbFormulas.grabarInsumo()}" 
-                                                         update=":main:formulaInsumos :main:mttoFormulasTotales" />
+                                                         update=":main:mttoFormulas :main:formulaInsumos :main:mttoFormulasTotales msgEditar" />
                                         <p:commandButton icon="ui-icon-arrowreturnthick-1-w" title="Cancelar"
                                                          actionListener="#{mbFormulas.cancelarInsumo()}" 
-                                                         update=":main:formulaInsumos" 
+                                                         update=":main:mttoFormulas :main:formulaInsumos :main:mttoFormulasTotales" 
                                                          oncomplete="PF('mttoInsumosDlg').hide();" />
                                         <p:commandButton icon="ui-icon-trash" title="Eliminar Insumo" 
                                                          actionListener="#{mbFormulas.eliminarInsumo()}" 
-                                                         update=":main:formulaInsumos :main:mttoFormulasTotales" 
-                                                         oncomplete="PF('mttoInsumosDlg').hide();" />
+                                                         update=":main:mttoFormulas :main:formulaInsumos :main:mttoFormulasTotales msgEditar" 
+                                                         oncomplete="handleInsumo(xhr, status, args);" />
                                     </p:column>
                                 </p:row>
                             </f:facet>
@@ -280,6 +287,11 @@
                     </p:dialog>
                 </h:form>
                 <script type="text/javascript">
+                    function handleInsumo(xhr, status, args) {
+                        if (!(args.validationFailed || !args.okInsumo)) {
+                            PF('mttoInsumosDlg').hide();
+                        }
+                    }
                     function handleBuscar(xhr, status, args) {
                         if (!(args.validationFailed || !args.okBuscar)) {
                             PF('buscarProductoDlg').hide();

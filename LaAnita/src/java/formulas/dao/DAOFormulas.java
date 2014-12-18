@@ -37,7 +37,7 @@ public class DAOFormulas {
         }
     }
     
-    private TOInsumo construirInsumo(ResultSet rs) throws SQLException {
+    private TOInsumo construirTOInsumo(ResultSet rs) throws SQLException {
         TOInsumo to=new TOInsumo();
         to.setIdEmpaque(rs.getInt("idProducto"));
         to.setCantidad(rs.getDouble("cantidad"));
@@ -54,7 +54,7 @@ public class DAOFormulas {
         try {
             ResultSet rs=st.executeQuery(strSQL);
             while(rs.next()) {
-                insumos.add(construirInsumo(rs));
+                insumos.add(construirTOInsumo(rs));
             }
         } finally {
             st.close();
@@ -92,7 +92,7 @@ public class DAOFormulas {
     
     public double agregarInsumo(int idFormula, int idEmpresa, TOInsumo to) throws SQLException {
         double costoPromedio=0;
-        String strSQL="SELECT costoUnitarioPromedio FROM formulasInsumos WHERE idFormula="+idFormula+" AND idProducto="+to.getIdEmpaque();
+        String strSQL="SELECT costoUnitarioPromedio FROM empresasEmpaques WHERE idEmpresa="+idEmpresa+" AND idEmpaque="+to.getIdEmpaque();
         Connection cn=ds.getConnection();
         Statement st=cn.createStatement();
         try {
@@ -102,10 +102,13 @@ public class DAOFormulas {
             if(rs.next()) {
                 costoPromedio=rs.getDouble("costoUnitarioPromedio");
             }
-            strSQL="INSERT INTO formulasInsumos (idFormula, idProducto, cantidad, porcentVariacion, costoUnitarioPromedio, costoUnitario) "
-                + "VALUES ("+idFormula+", "+to.getIdEmpaque()+", "+to.getCantidad()+", "+to.getPorcentVariacion()+", "+costoPromedio+", 0.00)";
-            st.executeUpdate(strSQL);
-            
+            if(costoPromedio==0) {
+                throw new SQLException("No se puede incluir a la formula un insumo con costo cero !!!");
+            } else {
+                strSQL="INSERT INTO formulasInsumos (idFormula, idProducto, cantidad, porcentVariacion, costoUnitarioPromedio, costoUnitario) "
+                    + "VALUES ("+idFormula+", "+to.getIdEmpaque()+", "+to.getCantidad()+", "+to.getPorcentVariacion()+", "+costoPromedio+", 0.00)";
+                st.executeUpdate(strSQL);
+            }
             st.executeUpdate("commit Transaction");
         } catch (SQLException e) {
             st.executeUpdate("rollback Transaction");
@@ -117,7 +120,7 @@ public class DAOFormulas {
         return costoPromedio;
     }
     
-    private TOFormula construirFormula(ResultSet rs) throws SQLException {
+    private TOFormula construirTOFormula(ResultSet rs) throws SQLException {
         TOFormula to=new TOFormula();
         to.setIdFormula(rs.getInt("idFormula"));
         to.setIdEmpresa(rs.getInt("idEmpresa"));
@@ -128,15 +131,15 @@ public class DAOFormulas {
         return to;
     }
     
-    public TOFormula obtenerFormula(int idEmpaque) throws SQLException {
+    public TOFormula obtenerFormula(int idEmpresa, int idEmpaque) throws SQLException {
         TOFormula to=new TOFormula();
-        String strSQL="SELECT * FROM formulas WHERE idEmpaque="+idEmpaque;
+        String strSQL="SELECT * FROM formulas WHERE idEmpresa="+idEmpresa+" AND idEmpaque="+idEmpaque;
         Connection cn=ds.getConnection();
         Statement st=cn.createStatement();
         try {
             ResultSet rs=st.executeQuery(strSQL);
             if(rs.next()) {
-                to=construirFormula(rs);
+                to=construirTOFormula(rs);
             }
         } finally {
             st.close();
