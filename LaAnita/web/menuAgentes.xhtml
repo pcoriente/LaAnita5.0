@@ -10,6 +10,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"></meta>
         <h:outputStylesheet library="css" name="main.css"/>
         <h:outputStylesheet library="css" name="estilos.css"/>
+        
     </h:head>
     <h:body>
         <div id="wrapper" align="center">
@@ -32,7 +33,7 @@
                                              process="@this"
                                              title="Actualizar Agente"
                                              disabled="#{mbAgentes.actualizar==0}"
-                                             update=":form:txtRfc :form:btnBuscar"
+
                                              />
                             <p:commandButton icon="ui-icon-arrowreturnthick-1-w"
                                              ajax="false"
@@ -51,6 +52,9 @@
                             scrollable="true"
                             scrollHeight="322"
                             >
+                            <f:facet name="footer">
+                                #{mbAgentes.listaAgentes.size()} Agentes encontrados.
+                            </f:facet>
                             <p:ajax event="rowSelect"
                                     listener="#{mbAgentes.cargarDatosActualizar()}"
                                     process="@this"
@@ -78,61 +82,21 @@
                               resizable="false"
                               closable="false">
                         <center>
+                            <div align="right">
+                                <p:commandButton icon="ui-icon-note"
+                                                 title="Mas datos"
+                                                 onclick="PF('dlgContribuyente').show();"
+                                                 />
+                            </div>
                             <h:panelGrid columns="3" 
                                          id="panelNuevoAgente">
-                                <h:outputText id="lblRfc" value="Rfc:" />
-                                <p:inputText id="txtRfc"
-                                             value="#{mbAgentes.mbContribuyente.contribuyente.rfc}"
-                                             disabled="#{mbAgentes.actualizar==1 || mbAgentes.buscadorContribuyentes==true}">
-                                    <p:ajax event="keyup"
-                                            listener="#{mbAgentes.dameStatusRfc()}"
-                                            process="txtRfc"
-                                            update="txtCurp growl"/>
-                                    <p:ajax event="blur"
-                                            listener="#{mbAgentes.dameStatusRfc()}"
-                                            process="@this"
-                                            update="txtCurp growl"/>
-                                </p:inputText>
-                                <p:commandButton icon="ui-icon-search" 
-                                                 id="btnBuscar"
-                                                 title="Buscar contribuyente"
-                                                 disabled="#{mbAgentes.actualizar ==1}"
-                                                 actionListener="#{mbAgentes.buscar()}"
-                                                 update=":form:panelNuevoAgente 
-                                                 growl"/>
-                                <h:outputText id="lblContribuyente" value="Contribuyente:" />
-                                <p:inputText id="txtContribuyente"
-                                             value="#{mbAgentes.mbContribuyente.contribuyente.contribuyente}"/>
-                                <h:outputLabel/>
-
-                                <h:outputText id="lblCurp" value="Curp:" />
-                                <p:inputText id="txtCurp" 
-                                             disabled="#{mbAgentes.personaFisica ==2|| mbAgentes.personaFisica ==0 || mbAgentes.buscadorContribuyentes== true}" 
-                                             value="#{mbAgentes.mbContribuyente.contribuyente.curp}">
-                                </p:inputText>
-                                <h:outputLabel/>
-                                <h:outputText id="lblDirContribuyente" value="Dir. Contribuyente" />
-                                <p:inputTextarea id="direccionFiscal" 
-                                                 value="#{mbAgentes.agente.contribuyente.direccion}"
-                                                 disabled="true"
-                                                 style="font-size: 10px"
-                                                 rows="5"
-                                                 cols="26">
-                                </p:inputTextarea>
-                                <p:commandButton oncomplete="PF('dlgDireccion').show();" 
-                                                 icon="ui-icon-plusthick"
-                                                 title="Nueva direccion Fiscal"
-                                                 process="@this"
-                                                 actionListener="#{mbAgentes.respaldoDireccionContribuyente()}"
-                                                 update="asentamientos cboPaises cboAsentamientos localidad municipio estado gln calle  noExterior noInterior referencia :form:codigoPostal"
-                                                 />
                                 <h:outputText id="lblAgente" value="Agente:" />
                                 <p:inputText id="txtNombreAgente"
                                              value="#{mbAgentes.agente.agente}"
                                              /> 
                                 <h:outputLabel/>
                                 <h:outputText id="lblCedis" value="Cedis :" />
-                                <p:selectOneMenu  id="cmbCedis" style="width: 145px" 
+                                <p:selectOneMenu  id="cmbCedis" style="width: 175px" 
                                                   value="#{mbAgentes.agente.miniCedis}"
                                                   filter="true">
                                     <f:selectItems value="#{mbAgentes.listaMiniCedis}" />
@@ -214,20 +178,40 @@
                             </h:panelGrid>
                             <p:commandButton  icon="#{mbAgentes.lblnuevoAgente}" 
                                               title="Guardar Agente"
-                                              process="@this txtNombreAgente txtRfc txtContribuyente txtCurp direccionFiscal cmbCedis direccionAgente correo"
+                                              process="@this txtNombreAgente cmbCedis direccionAgente correo"
                                               actionListener="#{mbAgentes.agregarNuevoAgente()}"
                                               oncomplete="nuevoContribuyente(xhr, status, args)"
                                               update="growl listaAgentes actualizar"/>
                             <p:commandButton  icon="ui-icon-arrowreturnthick-1-w"
                                               title="Cancelar Agente"
                                               update=":form:listaAgentes 
-                                              :form:actualizar 
-                                              :form:txtCurp"
+                                              :form:actualizar"
                                               actionListener="#{mbAgentes.deseleccionar()}"
                                               process="@this"
                                               oncomplete="PF('dlg').hide()"/>
                         </center>
                     </p:dialog>
+
+                    <p:dialog widgetVar="dlgContribuyente"
+                              modal="true"
+                              header="Datos del contribuyente">
+
+                        <h:panelGrid columns="3">
+                            <p:outputLabel style="color: black" value="Contribuyente:"/>
+                            <p:inputText/>
+                            <p:outputLabel/>
+                            <p:outputLabel style="color: black"  value="Rfc:"/>
+                            <p:inputText/>
+                            <p:outputLabel/>
+                            <p:outputLabel style="color: black"  value="Direccion:"/>
+                            <p:inputTextarea style="width: 168px"/>
+                            <p:commandButton icon="ui-icon-plus" title="Agregar Direccion"/>
+                        </h:panelGrid>
+
+                        <p:commandButton  style=""
+                                          value="Guardar"/>
+                    </p:dialog>
+
                     <!--- Dialog de Direccion -->
                     <p:dialog  header="Nueva Dirección" 
                                widgetVar="dlgDireccion"
@@ -302,13 +286,13 @@
                                                  actionListener="#{mbAgentes.validarDireccion()}"
                                                  process="@this txtAsentamiento cboPaises localidad municipio estado gln calle txtAsentamiento noExterior noInterior referencia codigoPostal"
                                                  title="Grabar Direccion"
-                                                 update="direccionFiscal direccionAgente growl"
+                                                 update="direccionAgente growl"
                                                  oncomplete="nuevaDireccion(xhr, status, args)" />
                                 <p:commandButton icon="ui-icon-arrowreturnthick-1-w"
                                                  title="Cancelar Direccion"
                                                  actionListener="#{mbAgentes.mbDireccion.cancelarDireccion()}"
                                                  process="@this"
-                                                 update="cboPaises localidad municipio estado gln calle txtAsentamiento noExterior noInterior referencia codigoPostal direccionFiscal"
+                                                 update="cboPaises localidad municipio estado gln calle txtAsentamiento noExterior noInterior referencia codigoPostal"
                                                  oncomplete=" PF('dlgDireccion').hide();"/>
                             </h:panelGroup>
                         </h:panelGrid>
@@ -558,61 +542,61 @@
         </div>
         <script type="text/javascript">
 
-                    function nuevoCorreos(xhr, status, args) {
-                        if (args.validationFailed || !args.ok) {
-                            PF('dlgCorreos').jq.effect("shake", {times: 5}, 100);
-                        }
-                        else {
-                            PF('dlgCorreos').hide();
-                        }
-                    }
-                    function nuevoContribuyente(xhr, status, args) {
-                        if (args.validationFailed || !args.ok) {
-                            PF('dlg').jq.effect("shake", {times: 5}, 100);
-                        }
-                        else {
-                            PF('dlg').hide();
-                        }
-                    }
-                    function nuevaDireccion(xhr, status, args) {
-                        if (args.validationFailed || !args.okContribuyente) {
-                            PF('dlgDireccion').jq.effect("shake", {times: 5}, 100);
-                        }
-                        else {
-                            PF('dlgDireccion').hide();
-                        }
-                    }
-                    function nuevoCont(xhr, status, args) {
-                        if (args.validationFailed || !args.okContacto) {
-                            PF('dlgContactos').jq.effect("shake", {times: 5}, 100);
-                        }
-                        else {
-                            PF('dlgContactos').hide();
-                        }
-                    }
+            function nuevoCorreos(xhr, status, args) {
+                if (args.validationFailed || !args.ok) {
+                    PF('dlgCorreos').jq.effect("shake", {times: 5}, 100);
+                }
+                else {
+                    PF('dlgCorreos').hide();
+                }
+            }
+            function nuevoContribuyente(xhr, status, args) {
+                if (args.validationFailed || !args.ok) {
+                    PF('dlg').jq.effect("shake", {times: 5}, 100);
+                }
+                else {
+                    PF('dlg').hide();
+                }
+            }
+            function nuevaDireccion(xhr, status, args) {
+                if (args.validationFailed || !args.okContribuyente) {
+                    PF('dlgDireccion').jq.effect("shake", {times: 5}, 100);
+                }
+                else {
+                    PF('dlgDireccion').hide();
+                }
+            }
+            function nuevoCont(xhr, status, args) {
+                if (args.validationFailed || !args.okContacto) {
+                    PF('dlgContactos').jq.effect("shake", {times: 5}, 100);
+                }
+                else {
+                    PF('dlgContactos').hide();
+                }
+            }
 
-                    function nuevoTelefono(xhr, status, args) {
-                        if (args.validationFailed || !args.okTelefono) {
-                            PF('mttoTelefonosDialog').jq.effect("shake", {times: 5}, 100);
-                        }
-                        else {
-                            PF('mttoTelefonosDialog').hide();
-                        }
-                    }
+            function nuevoTelefono(xhr, status, args) {
+                if (args.validationFailed || !args.okTelefono) {
+                    PF('mttoTelefonosDialog').jq.effect("shake", {times: 5}, 100);
+                }
+                else {
+                    PF('mttoTelefonosDialog').hide();
+                }
+            }
 
-                    function handleTelefonoTipo(xhr, status, args) {
-                        if (args.validationFailed || !args.okTelefonoTipo) {
-                            PF('mttoTelefonosTiposDialog').jq.effect("shake", {times: 5}, 100);
-                        } else {
-                            PF('mttoTelefonosTiposDialog').hide();
-                        }
-                    }
+            function handleTelefonoTipo(xhr, status, args) {
+                if (args.validationFailed || !args.okTelefonoTipo) {
+                    PF('mttoTelefonosTiposDialog').jq.effect("shake", {times: 5}, 100);
+                } else {
+                    PF('mttoTelefonosTiposDialog').hide();
+                }
+            }
 
-                    function handleBuscarContribuyente(xhr, status, args) {
-                        if (!(args.validationFailed || !args.okBuscarContribuyente)) {
-                            PF('buscarProvDlg').hide();
-                        }
-                    }</script>
+            function handleBuscarContribuyente(xhr, status, args) {
+                if (!(args.validationFailed || !args.okBuscarContribuyente)) {
+                    PF('buscarProvDlg').hide();
+                }
+            }</script>
 
     </h:body>
 </html>

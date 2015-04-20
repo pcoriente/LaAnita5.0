@@ -142,88 +142,84 @@ public class MbAgentes implements Serializable {
         RequestContext context = RequestContext.getCurrentInstance();
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
         boolean ok = false;
-        ok = mbContribuyente.valida();
-        if (ok == true) {
-            agente.getContribuyente().setContribuyente(mbContribuyente.getContribuyente().getContribuyente());
-            agente.getContribuyente().setRfc(mbContribuyente.getContribuyente().getRfc());
-            agente.getContribuyente().setCurp(mbContribuyente.getContribuyente().getCurp());
-            if (agente.getContribuyente().getDireccion().getCalle().equals("")) {
-                ok = false;
-                fMsg.setDetail("Se requiere una Dirección!!");
-                if (!ok) {
-                    FacesContext.getCurrentInstance().addMessage(null, fMsg);
-                }
-                context.addCallbackParam("okContribuyente", ok);
-            } else {
-                ok = this.validarAgente();
-                if (ok == true) {
-                    if (agente.getMiniCedis().getIdCedis() == 0) {
-                        ok = false;
-                        fMsg.setDetail("Se requiere un Cedis!!");
-                        FacesContext.getCurrentInstance().addMessage(null, fMsg);
-                    } else {
-                        if (ok == true) {
-                            try {
-                                if (this.agente.getContacto().getCorreo().equals("") && actualizar == 0) {
-                                    ok = false;
-                                    fMsg.setDetail("Error!! Correo Requerido");
-                                    FacesContext.getCurrentInstance().addMessage(null, fMsg);
-                                } else {
-                                    Utilerias u = new Utilerias();
-                                    boolean paso = true;
-                                    if (actualizar == 0) {
-                                        paso = u.validarEmail(this.agente.getContacto().getCorreo());
-                                    }
-                                    if (paso == true) {
-                                        listaAgentes = null;
-                                        DaoAgentes daoAgentes = new DaoAgentes();
-                                        if (actualizar == 0) {
-                                            boolean okExito = false;
-                                            if (buscadorContribuyentes == false) {
-                                                okExito = daoAgentes.guardarAgentes(agente);
-                                            } else {
-                                                agente.getContribuyente().setIdContribuyente(mbContribuyente.getContribuyente().getIdContribuyente());
-                                                okExito = daoAgentes.guardarAgentesConContribuyente(agente);
-                                            }
-                                            if (okExito == true) {
-                                                ok = true;
-                                                fMsg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "");
-                                                fMsg.setDetail("Exito!! Nuevo Agente Disponible");
-                                                FacesContext.getCurrentInstance().addMessage(null, fMsg);
-                                            }
-                                        } else {
-                                            DaoAgentes daoAgente = new DaoAgentes();
-                                            daoAgente.actualizarAgente(agente, mbContribuyente.getContribuyente());
-                                            this.setActualizar(0);
-                                            ok = true;
-                                            fMsg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "");
-                                            fMsg.setDetail("Exito!! Agente Actualizado");
-                                            FacesContext.getCurrentInstance().addMessage(null, fMsg);
-                                        }
-                                    } else {
-                                        ok = false;
-                                        fMsg.setDetail("Error!! Correo no Valido");
-                                        FacesContext.getCurrentInstance().addMessage(null, fMsg);
-                                    }
-                                }
-                                context.addCallbackParam("okContribuyente", ok);
-                            } catch (SQLException ex) {
-                                ok = false;
-                                int errorCode = ex.getErrorCode();
-                                switch (errorCode) {
-                                    case 2601:
-                                        Mensajes.mensajeAlert("Este Contribuyente ya esta dado de alta. Implemente el buscador");
-                                        break;
-                                    default:
-                                        Mensajes.mensajeError(ex.getMessage());
-                                        break;
-                                }
+        ok = validarAgente();
+//        ok = mbContribuyente.valida();
+//        if (ok == true) {
+//            agente.getContribuyente().setContribuyente(mbContribuyente.getContribuyente().getContribuyente());
+//            agente.getContribuyente().setRfc(mbContribuyente.getContribuyente().getRfc());
+//            agente.getContribuyente().setCurp(mbContribuyente.getContribuyente().getCurp());
+//            if (agente.getContribuyente().getDireccion().getCalle().equals("")) {
+//                ok = false;
+//                fMsg.setDetail("Se requiere una Dirección!!");
+//                if (!ok) {
+//                    FacesContext.getCurrentInstance().addMessage(null, fMsg);
+//                }
+//                context.addCallbackParam("okContribuyente", ok);
+//            } else {
+//                ok = this.validarAgente();
+//                if (ok == true) {
+//        if (agente.getMiniCedis().getIdCedis() == 0) {
+//            ok = false;
+//            fMsg.setDetail("Se requiere un Cedis!!");
+//            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+//        } else {
+            if (ok == true) {
+                try {
+//                    Utilerias u = new Utilerias();
+//                    boolean paso = true;
+//                    if (actualizar == 0) {
+//                        paso = u.validarEmail(this.agente.getContacto().getCorreo());
+//                    }
+//                    if (paso == true) {
+                        listaAgentes = null;
+                        DaoAgentes daoAgentes = new DaoAgentes();
+                        if (actualizar == 0) {
+                            boolean okExito = false;
+//                            if (buscadorContribuyentes == false) {
+                                okExito = daoAgentes.guardarAgentes(agente);
+//                            } else {
+//                                agente.getContribuyente().setIdContribuyente(mbContribuyente.getContribuyente().getIdContribuyente());
+//                                okExito = daoAgentes.guardarAgentesConContribuyente(agente);
+//                            }
+                            if (okExito == true) {
+                                ok = true;
+                                fMsg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "");
+                                fMsg.setDetail("Exito!! Nuevo Agente Disponible");
+                                FacesContext.getCurrentInstance().addMessage(null, fMsg);
                             }
+                        } else {
+                            DaoAgentes daoAgente = new DaoAgentes();
+                            daoAgente.actualizarAgente(agente, mbContribuyente.getContribuyente());
+                            this.setActualizar(0);
+                            ok = true;
+                            fMsg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "");
+                            fMsg.setDetail("Exito!! Agente Actualizado");
+                            FacesContext.getCurrentInstance().addMessage(null, fMsg);
                         }
+//                    } else {
+//                        ok = false;
+//                        fMsg.setDetail("Error!! Correo no Valido");
+//                        FacesContext.getCurrentInstance().addMessage(null, fMsg);
+//                    }
+//                    }
+                    context.addCallbackParam("okContribuyente", ok);
+                } catch (SQLException ex) {
+                    ok = false;
+                    int errorCode = ex.getErrorCode();
+                    switch (errorCode) {
+                        case 2601:
+                            Mensajes.mensajeAlert("Este Contribuyente ya esta dado de alta. Implemente el buscador");
+                            break;
+                        default:
+                            Mensajes.mensajeError(ex.getMessage());
+                            break;
                     }
                 }
             }
-        }
+//        }
+//                }
+//            }
+//        }
         mbContactos = new MbContactos();
         seleccionListaAgentes = null;
         context.addCallbackParam("ok", ok);
@@ -235,19 +231,27 @@ public class MbAgentes implements Serializable {
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
         if (agente.getAgente().equals("")) {
             fMsg.setDetail("Se requiere el Agente !!");
-            if (!ok) {
-                FacesContext.getCurrentInstance().addMessage(null, fMsg);
-            }
-            context.addCallbackParam("okContribuyente", ok);
-        } else if (agente.getDireccionAgente().getCalle().equals("")) {
-            fMsg.setDetail("Se requiere un Direcciòn !!");
-            if (!ok) {
-                FacesContext.getCurrentInstance().addMessage(null, fMsg);
-            }
-            context.addCallbackParam("okContribuyente", ok);
-        } else {
+        } else if (agente.getMiniCedis().getIdCedis() == 0) {
+            ok = false;
+            fMsg.setDetail("Se requiere un Cedis!!");
+//            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+        } else if (this.agente.getContacto().getCorreo().equals("") && actualizar == 0) {
+            ok = false;
+            fMsg.setDetail("Error!! Correo Requerido");
+//            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+        }
+        else if(Utilerias.validarEmail(agente.getContacto().getCorreo()) == false){
+             ok = false;
+            fMsg.setDetail("Error!! Correo no valido");
+//            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+        }
+        
+        
+        else {
             ok = true;
         }
+        FacesContext.getCurrentInstance().addMessage(null, fMsg);
+        context.addCallbackParam("okContribuyente", ok);
         return ok;
     }
 
@@ -560,7 +564,7 @@ public class MbAgentes implements Serializable {
                         Mensajes.mensajeError(ex.getMessage());
                         Logger
                                 .getLogger(MbAgentes.class
-                                .getName()).log(Level.SEVERE, null, ex);
+                                        .getName()).log(Level.SEVERE, null, ex);
                     }
                 } else {
                     dao.modificar(mbContactos.getMbTelefonos().getTelefono());
